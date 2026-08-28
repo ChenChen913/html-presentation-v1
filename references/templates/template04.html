@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>认知负荷与课件设计 · 教师发展工作坊 — 学术液态模板</title>
+    <style>
+        :root {
+            --primary-accent: #5e7e85; /* 灰湖蓝 */
+            --secondary-accent: #92a892; /* 密林绿 */
+            --text-dark: #2c3e50;
+            --text-light: #444b50;
+            --glass-alpha: rgba(255, 255, 255, 0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            color: var(--text-dark);
+            background: #f0f2f5;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ==================== 苹果级液态流体背景 ==================== */
+        .bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #eef2f3 0%, #8e9eab 100%);
+        }
+        .liquid-blob {
+            position: absolute;
+            filter: blur(120px);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+        .blob-1 { width: 80vw; height: 80vh; background: #d4e4d4; top: -20%; left: -10%; }
+        .blob-2 { width: 60vw; height: 60vh; background: #c9d6df; bottom: -10%; right: -5%; animation-delay: -7s; }
+        @keyframes drift {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to { transform: translate(100px, 100px) rotate(30deg); }
+        }
+
+        /* ==================== 阔幅内容容器 ==================== */
+        .stage {
+            width: 96vw;
+            height: 92vh;
+            background: var(--glass-alpha);
+            backdrop-filter: blur(40px) saturate(150%);
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* 顶部装饰条 */
+        .top-bar {
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .logo-text { font-size: 1.2rem; font-weight: bold; letter-spacing: 4px; color: var(--primary-accent); }
+        .top-meta { font-size: 1rem; color: #7a868c; letter-spacing: 2px; }
+
+        /* 幻灯片主体 */
+        .slides-wrapper { flex: 1; position: relative; width: 100%; }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: clamp(1.8rem, 4vh, 40px) clamp(2.4rem, 5.5vw, 80px);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(30px);
+            transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 垂直居中，保持疏朗 */
+            overflow: hidden;
+        }
+        .slide.active { opacity: 1; visibility: visible; transform: translateX(0); }
+
+        /* ==================== 教学排版引擎 ==================== */
+        .kicker {
+            font-size: 1.15rem;
+            letter-spacing: .3em;
+            color: var(--secondary-accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.25;
+        }
+        .lede {
+            font-size: 1.8rem;
+            line-height: 1.8;
+            color: #5a646b;
+            margin-top: 1rem;
+        }
+        .cover-foot {
+            margin-top: 2.4rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(44,62,80,.15);
+            display: flex;
+            gap: 2.6rem;
+            font-size: 1.08rem;
+            color: #7a868c;
+        }
+
+        .slide h2 {
+            font-size: 3.8rem;
+            margin-bottom: clamp(1.4rem, 3.6vh, 2.4rem);
+            font-weight: 500;
+            color: #2c3e50;
+            line-height: 1.25;
+        }
+        .slide h2 span {
+            display: block;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            color: var(--secondary-accent);
+            margin-bottom: 10px;
+        }
+
+        .content-area {
+            font-size: 1.8rem;
+            line-height: 1.75;
+            color: var(--text-light);
+            max-width: 92%;
+        }
+        .content-area ul { list-style: none; }
+        .content-area li {
+            margin-bottom: clamp(.9rem, 2.2vh, 1.4rem);
+            padding-left: 40px;
+            position: relative;
+        }
+        .content-area li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.8em;
+            width: 15px;
+            height: 2px;
+            background: var(--primary-accent);
+        }
+
+        /* 重点强调块 */
+        .highlight-box {
+            margin-top: clamp(1rem, 2.6vh, 1.6rem);
+            padding: clamp(1.1rem, 2.6vh, 1.6rem) clamp(1.4rem, 3vw, 2.2rem);
+            background: rgba(255,255,255,0.3);
+            border-left: 8px solid var(--secondary-accent);
+            border-radius: 8px;
+            font-size: 1.6rem;
+            line-height: 1.75;
+            color: var(--text-light);
+            max-width: 92%;
+        }
+        .def-src { margin-top: .6rem; font-size: 1.05rem !important; color: #7a868c !important; }
+
+        /* 卡片与网格 */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; }
+        .card {
+            background: rgba(255,255,255,0.32);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 14px;
+            padding: 1.4rem 1.6rem;
+        }
+        .card-name { font-size: 1.4rem; font-weight: 700; color: #2c3e50; margin-bottom: .55rem; }
+        .card-text { font-size: 1.18rem; line-height: 1.7; color: #4d565c; }
+
+        .stat-num {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-accent);
+            line-height: 1.25;
+            font-variant-numeric: tabular-nums;
+        }
+        .stat-label { margin-top: .5rem; font-size: 1.22rem; color: #2c3e50; font-weight: 600; }
+        .stat-note { margin-top: .3rem; font-size: 1.02rem; color: #7a868c; }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: .95rem 1.1rem;
+            text-align: left;
+            font-size: 1.24rem;
+            line-height: 1.6;
+            border-bottom: 1px solid rgba(44, 62, 80, 0.12);
+        }
+        .table th { color: #2c3e50; font-weight: 700; border-bottom: 2px solid var(--primary-accent); }
+        .table td { color: #444b50; }
+
+        /* 四原则步骤 */
+        .steps { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; }
+        .steps li {
+            display: flex; gap: 1.1rem; align-items: flex-start;
+            background: rgba(255,255,255,0.32);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+        }
+        .step-no {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-accent);
+            line-height: 1.15;
+            font-variant-numeric: tabular-nums;
+        }
+        .step-body { font-size: 1.28rem; line-height: 1.55; color: #2c3e50; font-weight: 700; }
+        .step-body small { display: block; margin-top: .3rem; font-size: 1.08rem; font-weight: 400; color: #5a646b; line-height: 1.65; }
+
+        /* 目录 */
+        .toc { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 1rem;
+            background: rgba(255,255,255,0.32);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 14px;
+            padding: 1.05rem 1.4rem;
+        }
+        .toc .no { font-size: 1.35rem; font-weight: 700; color: var(--primary-accent); font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.3rem; font-weight: 700; color: #2c3e50; }
+        .toc .d { margin-left: auto; font-size: 1rem; color: #7a868c; }
+
+        /* ==================== 控制组件 ==================== */
+        .nav-footer {
+            height: 84px;
+            padding: 0 clamp(2.4rem, 5.5vw, 80px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+        .page-num { font-size: 1.2rem; color: var(--primary-accent); font-weight: bold; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
+        .nav-buttons { display: flex; gap: 14px; }
+        .nav-buttons button {
+            background: rgba(0,0,0,0.05);
+            border: none;
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            color: var(--primary-accent);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all .3s;
+        }
+        .nav-buttons button:hover { background: var(--primary-accent); color: #fff; }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 3rem; } .slide h2 { font-size: 2.6rem; } .content-area { font-size: 1.4rem; }
+            .grid-3, .steps, .toc { grid-template-columns: 1fr; gap: .9rem; }
+            .stage { width: 97vw; height: 94vh; }
+            .top-bar { padding: 14px 24px; }
+            .toc .d { display: none; }
+            .nav-footer { height: 64px; padding: 0 24px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .liquid-blob { animation: none; }
+            .slide { transition: opacity .3s ease; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-canvas">
+        <div class="liquid-blob blob-1"></div>
+        <div class="liquid-blob blob-2"></div>
+    </div>
+
+    <div class="stage">
+
+        <div class="top-bar">
+            <span class="logo-text">TEACHING WORKSHOP</span>
+            <span class="top-meta">2026 春季学期 · 教师发展中心</span>
+        </div>
+
+        <div class="slides-wrapper">
+
+            <!-- 1 封面 -->
+            <section class="slide active">
+                <span class="kicker">CHAPTER 00 · 工作坊</span>
+                <h1>认知负荷与课件设计</h1>
+                <p class="lede">让幻灯片为理解服务，而不是为炫技服务。</p>
+                <div class="cover-foot">
+                    <span>主讲 · 顾砚</span>
+                    <span>教师发展中心</span>
+                </div>
+            </section>
+
+            <!-- 2 目录 -->
+            <section class="slide">
+                <h2><span>Agenda</span>今天讲四件事</h2>
+                <ul class="toc">
+                    <li><span class="no">01</span><span class="t">认知负荷是什么</span><span class="d">一个关于带宽的假设</span></li>
+                    <li><span class="no">02</span><span class="t">三种负荷</span><span class="d">内在、外在、相关</span></li>
+                    <li><span class="no">03</span><span class="t">设计四原则</span><span class="d">就近、信号、通道、冗余</span></li>
+                    <li><span class="no">04</span><span class="t">课堂验证与自检</span><span class="d">用数据说话</span></li>
+                </ul>
+            </section>
+
+            <!-- 3 定义 -->
+            <section class="slide">
+                <h2><span>Definition</span>认知负荷是什么</h2>
+                <div class="highlight-box">
+                    认知负荷理论：学习效果取决于工作记忆的带宽。课件的任务是省带宽，而不是占带宽。
+                    <p class="def-src">—— Sweller, 1988</p>
+                </div>
+                <ul class="content-area" style="margin-top: clamp(1rem, 2.6vh, 1.6rem);">
+                    <li>工作记忆一次约能处理 4 个信息组块。</li>
+                    <li>与目标无关的冗余信息，会挤占理解空间。</li>
+                </ul>
+            </section>
+
+            <!-- 4 三种负荷 -->
+            <section class="slide">
+                <h2><span>Three Loads</span>三种负荷，三种对策</h2>
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="card-name">内在负荷</div>
+                        <p class="card-text">知识本身的难度，由内容决定，设计改变不了。</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-name">外在负荷</div>
+                        <p class="card-text">呈现方式带来的干扰，应当由设计消除。</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-name">相关负荷</div>
+                        <p class="card-text">用于建构图式的努力，应当由设计引导。</p>
+                    </div>
+                </div>
+                <div class="highlight-box">设计能动的只有后两项：把干扰清出去，把图式带进来。</div>
+            </section>
+
+            <!-- 5 课堂验证 -->
+            <section class="slide">
+                <h2><span>Evidence</span>一堂课的改变</h2>
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="stat-num">41% → 18%</div>
+                        <div class="stat-label">走神率下降</div>
+                        <div class="stat-note">纯文字版对图文匹配版，平行班对照</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-num">+17%</div>
+                        <div class="stat-label">课后测正确率</div>
+                        <div class="stat-note">同难度题目重测</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-num">4 条</div>
+                        <div class="stat-label">单页要点上限</div>
+                        <div class="stat-note">超出就拆成两页</div>
+                    </div>
+                </div>
+                <p class="lede" style="margin-top: clamp(1rem, 2.6vh, 1.6rem);">数据来自 2025 秋季两个平行班（n=96）。</p>
+            </section>
+
+            <!-- 6 常见做法 vs 建议做法 -->
+            <section class="slide">
+                <h2><span>Before · After</span>常见做法与建议做法</h2>
+                <table class="table">
+                    <thead>
+                        <tr><th>常见做法</th><th>建议做法</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>大段讲义上屏</td><td>一页只讲一个观点</td></tr>
+                        <tr><td>花哨转场动画</td><td>统一淡入即可</td></tr>
+                        <tr><td>多种颜色强调</td><td>深浅两色定式</td></tr>
+                        <tr><td>边念稿边上屏</td><td>屏幕是地图，讲述是路</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 7 设计四原则 -->
+            <section class="slide">
+                <h2><span>Principles</span>设计四原则</h2>
+                <ol class="steps">
+                    <li>
+                        <span class="step-no">01</span>
+                        <span class="step-body">就近原则<small>图与文紧挨着，不让学生来回找。</small></span>
+                    </li>
+                    <li>
+                        <span class="step-no">02</span>
+                        <span class="step-body">信号原则<small>删掉装饰，突出真正要看的。</small></span>
+                    </li>
+                    <li>
+                        <span class="step-no">03</span>
+                        <span class="step-body">通道原则<small>口头讲文字，屏幕放图形，别重复。</small></span>
+                    </li>
+                    <li>
+                        <span class="step-no">04</span>
+                        <span class="step-body">冗余原则<small>屏上有的字，不再念第二遍。</small></span>
+                    </li>
+                </ol>
+            </section>
+
+            <!-- 8 快速自检 -->
+            <section class="slide">
+                <h2><span>Checklist</span>放映前，问自己四个问题</h2>
+                <ul class="content-area">
+                    <li>这页能不能删？能删就删。</li>
+                    <li>图和文字讲的是同一件事吗？</li>
+                    <li>颜色是否不超过三种？</li>
+                    <li>学生 3 秒内能找到重点吗？</li>
+                </ul>
+                <div class="highlight-box">四问全部通过，这一页才算合格；这是工作坊现场练习用的自检表。</div>
+            </section>
+
+            <!-- 9 成果 -->
+            <section class="slide">
+                <h2><span>Outcomes</span>工作坊之后的变化</h2>
+                <ul class="content-area">
+                    <li>参训教师 86 人，覆盖 6 个学科组。</li>
+                    <li>课件平均页数从 42 减到 25。</li>
+                    <li>学生课堂主动提问数 +31%。</li>
+                    <li>下学期开放线上版本与模板库。</li>
+                </ul>
+            </section>
+
+            <!-- 10 结尾 -->
+            <section class="slide">
+                <span class="kicker">THANK YOU · Q&amp;A</span>
+                <h1 style="font-size: 3.2rem;">谢谢聆听</h1>
+                <p class="lede">接下来是提问与交流时间，也欢迎会后继续找我聊课件。</p>
+                <div class="cover-foot">
+                    <span>课件模板与自检表：ctld.edu.cn/clt</span>
+                    <span>顾砚 · 教师发展中心</span>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="nav-footer">
+            <span class="page-num" id="pageCounter">01 / 10</span>
+            <div class="nav-buttons">
+                <button data-action="prev" aria-label="上一页">‹</button>
+                <button data-action="next" aria-label="下一页">›</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function pad(n) { return String(n).padStart(2, '0'); }
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = pad(current + 1) + ' / ' + pad(total);
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

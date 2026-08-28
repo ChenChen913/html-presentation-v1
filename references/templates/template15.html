@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青屿 QINGYU · 原叶冷萃茶新品发布 — 晨雾青瓷玻璃 Keynote 模板</title>
+    <style>
+        :root {
+            --bg: #eef2ec;              /* 晨雾青瓷 */
+            --ink: #1d2b24;             /* 深松绿 */
+            --ink-soft: #4a5f54;        /* 次级松灰 */
+            --ink-faint: #7d9186;       /* 弱化 */
+            --accent: #3e7d5f;          /* 青瓷绿 */
+            --accent-deep: #2c5c45;     /* 深青瓷（渐变收尾） */
+            --glass-fill-a: rgba(255, 255, 255, 0.62);
+            --glass-fill-b: rgba(240, 248, 243, 0.30);
+            --glass-border: rgba(255, 255, 255, 0.75);
+            --glass-line: rgba(29, 43, 36, 0.12);
+            --card-shadow: 0 34px 70px -26px rgba(30, 64, 48, 0.40);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        /* ===== 晨雾氛围：青瓷绿径向光晕 + 极细噪点 ===== */
+        .glow { position: fixed; border-radius: 50%; filter: blur(95px); pointer-events: none; z-index: 0; }
+        .g1 {
+            width: 56vw; height: 56vw; left: -14vw; top: -20vw;
+            background: radial-gradient(circle, rgba(62, 125, 95, 0.30) 0%, rgba(62, 125, 95, 0) 70%);
+            animation: drift1 26s ease-in-out infinite alternate;
+        }
+        .g2 {
+            width: 48vw; height: 48vw; right: -12vw; bottom: -16vw;
+            background: radial-gradient(circle, rgba(44, 92, 69, 0.22) 0%, rgba(44, 92, 69, 0) 70%);
+            animation: drift2 32s ease-in-out infinite alternate;
+        }
+        .g3 {
+            width: 30vw; height: 30vw; right: 16vw; top: -10vw;
+            background: radial-gradient(circle, rgba(246, 252, 247, 0.90) 0%, rgba(246, 252, 247, 0) 72%);
+            animation: drift1 22s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes drift1 { to { transform: translate(6vw, 5vh) scale(1.08); } }
+        @keyframes drift2 { to { transform: translate(-5vw, -4vh) scale(1.10); } }
+
+        /* 极细噪点：纯 CSS 点阵纹理（零依赖） */
+        .grain {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1;
+            background-image: radial-gradient(rgba(29, 43, 36, 0.16) 0.5px, transparent 0.5px);
+            background-size: 4px 4px;
+            opacity: 0.10;
+        }
+
+        /* ===== 循环扫光：每 8s 一道倾斜柔光，白透明度 ≤8% ===== */
+        .sheen { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; }
+        .sheen::before {
+            content: ""; position: absolute; top: -25%; bottom: -25%; width: 36%;
+            left: -45%; transform: skewX(-16deg);
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0) 100%);
+            animation: sweep 8s ease-in-out infinite;
+        }
+        @keyframes sweep {
+            0%, 52% { left: -45%; }
+            82%, 100% { left: 150%; }
+        }
+
+        /* ===== 幻灯片：每页一个 100vh 全屏 section ===== */
+        .stage { position: relative; width: 100%; height: 100vh; z-index: 3; }
+        .slide {
+            position: absolute; inset: 0;
+            display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            padding: clamp(40px, 7vh, 72px) clamp(48px, 6.5vw, 116px);
+            overflow: hidden;
+        }
+        .slide.active { display: flex; animation: fadeIn 0.7s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(22px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 元素进场：淡入上移 0.6s，同级错落 80ms */
+        .slide.active .r1 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .06s both; }
+        .slide.active .r2 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .14s both; }
+        .slide.active .r3 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .22s both; }
+        .slide.active .r4 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .30s both; }
+        .slide.active .r5 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .38s both; }
+        .slide.active .r6 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .46s both; }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wrap { width: 100%; max-width: 1210px; }
+
+        /* ===== Keynote 排版层级 ===== */
+        .kicker {
+            font-size: 1rem; font-weight: 600;
+            letter-spacing: 0.34em; text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 26px;
+        }
+        h1 {
+            font-size: 6rem; font-weight: 700;
+            line-height: 1.06; letter-spacing: 0.02em;
+            color: var(--ink);
+            margin-bottom: 26px;
+            white-space: nowrap;
+        }
+        h2 {
+            font-size: 2.75rem; font-weight: 700;
+            line-height: 1.15; letter-spacing: 0.01em;
+            color: var(--ink);
+            margin-bottom: 18px;
+            white-space: nowrap;
+        }
+        .lede {
+            font-size: 1.5rem; font-weight: 400;
+            line-height: 1.7; color: var(--ink-soft);
+            max-width: 46em;
+            margin-bottom: 18px;
+        }
+        .sub {
+            font-size: 1.15rem; line-height: 1.75;
+            color: var(--ink-faint);
+            max-width: 52em;
+        }
+
+        /* ===== 浅色玻璃卡片：白瓷半透明 + backdrop blur + 内侧亮边 + 松绿投影 + 彩虹色散 ===== */
+        .glass {
+            position: relative;
+            background: linear-gradient(135deg, var(--glass-fill-a) 0%, var(--glass-fill-b) 100%);
+            backdrop-filter: blur(22px) saturate(140%);
+            -webkit-backdrop-filter: blur(22px) saturate(140%);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.85),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.30),
+                var(--card-shadow);
+            border-radius: 30px;
+        }
+        /* 边缘彩虹色散：红-橙-蓝渐变光晕（浅底上低透明度） */
+        .glass::before {
+            content: ""; position: absolute; inset: -3px; z-index: -1;
+            border-radius: 33px;
+            background: linear-gradient(118deg,
+                rgba(255, 96, 64, 0.55) 0%,
+                rgba(255, 176, 64, 0.55) 38%,
+                rgba(62, 125, 95, 0.45) 55%,
+                rgba(96, 148, 255, 0.55) 100%);
+            filter: blur(16px);
+            opacity: 0.20;
+        }
+
+        /* ===== 3D 玻璃方块（封面主角，浅色版） ===== */
+        .cube-scene { flex-shrink: 0; position: relative; }
+        .cube {
+            width: 208px; height: 208px; border-radius: 34px;
+            transform: rotate3d(1, -0.6, 0.12, 24deg);
+            background:
+                linear-gradient(150deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.34) 46%, rgba(62, 125, 95, 0.12) 100%);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow:
+                inset 0 2px 0 rgba(255, 255, 255, 0.90),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+                inset -14px -18px 34px rgba(62, 125, 95, 0.16),
+                0 46px 90px -22px rgba(30, 64, 48, 0.50);
+            position: relative;
+        }
+        /* 方块棱边彩虹色散 */
+        .cube::before {
+            content: ""; position: absolute; inset: -4px; z-index: -1;
+            border-radius: 38px;
+            background: linear-gradient(118deg,
+                rgba(255, 96, 64, 0.60) 0%, rgba(255, 176, 64, 0.60) 40%,
+                rgba(62, 125, 95, 0.50) 55%, rgba(96, 148, 255, 0.60) 100%);
+            filter: blur(19px);
+            opacity: 0.26;
+        }
+        /* 顶面高光，强化玻璃棱边 */
+        .cube::after {
+            content: ""; position: absolute; left: 8%; right: 42%; top: 6%; height: 26%;
+            border-radius: 22px;
+            background: linear-gradient(115deg, rgba(255, 255, 255, 0.70), rgba(255, 255, 255, 0.03));
+            filter: blur(1px);
+        }
+        .cube.small {
+            width: 96px; height: 96px; border-radius: 20px;
+            position: absolute; right: -52px; bottom: -34px;
+            transform: rotate3d(1, -0.6, 0.12, 24deg);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.90),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+                0 26px 52px -16px rgba(30, 64, 48, 0.45);
+        }
+        .cube.small::after { border-radius: 14px; left: 10%; right: 40%; top: 8%; height: 30%; }
+
+        /* ===== 要点玻璃横卡 ===== */
+        .row-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; width: 100%; margin-top: 34px; }
+        .row-card { padding: 30px 30px 26px; }
+        .row-card .tag {
+            display: inline-block; align-self: flex-start;
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.22em;
+            color: var(--accent); margin-bottom: 14px;
+        }
+        .row-card .name { font-size: 1.45rem; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+        .row-card .desc { font-size: 1.1rem; line-height: 1.7; color: var(--ink-soft); }
+
+        /* ===== 数据大字 ===== */
+        .big-num {
+            font-size: 7.5rem; font-weight: 700; line-height: 1.02;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 20px;
+        }
+        .big-num small { font-size: 2.6rem; font-weight: 600; color: var(--ink-soft); margin-left: 8px; }
+        .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; width: 100%; margin-top: 52px; }
+        .mini-stat { padding: 24px 28px; }
+        .mini-stat .n { font-size: 2.4rem; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.15; }
+        .mini-stat .n b { color: var(--accent); }
+        .mini-stat .t { font-size: 1rem; color: var(--ink-faint); margin-top: 8px; line-height: 1.6; }
+
+        /* ===== 图表页通用 ===== */
+        .chart-shell { padding: 34px 38px 26px; width: 100%; margin-top: 30px; }
+        .chart-note { font-size: 1rem; color: var(--ink-faint); margin-top: 16px; line-height: 1.65; }
+
+        /* ===== 玻璃表格（浅色） ===== */
+        .table-shell { padding: 12px 34px; width: 100%; margin-top: 30px; }
+        table.gtable { width: 100%; border-collapse: collapse; }
+        .gtable th {
+            text-align: left; font-size: 0.98rem; font-weight: 700;
+            letter-spacing: 0.10em; color: var(--accent);
+            padding: 16px 14px 12px;
+            border-bottom: 1.5px solid rgba(62, 125, 95, 0.45);
+        }
+        .gtable td {
+            font-size: 1.14rem; line-height: 1.6; color: var(--ink-soft);
+            padding: 15px 14px;
+            border-bottom: 1px solid var(--glass-line);
+        }
+        .gtable tr:last-child td { border-bottom: none; }
+        .gtable td:first-child { font-weight: 700; color: var(--ink); }
+        .gtable .num { font-variant-numeric: tabular-nums; }
+
+        /* ===== 环形图图例 ===== */
+        .donut-row { display: grid; grid-template-columns: 300px 1fr; gap: 44px; align-items: center; width: 100%; margin-top: 30px; }
+        .legend { list-style: none; }
+        .legend li { display: flex; align-items: baseline; gap: 14px; padding: 15px 4px; border-bottom: 1px solid var(--glass-line); }
+        .legend li:last-child { border-bottom: none; }
+        .legend .dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; align-self: center; }
+        .legend .lname { font-size: 1.2rem; font-weight: 600; color: var(--ink); }
+        .legend .ldesc { font-size: 1rem; color: var(--ink-faint); margin-left: auto; }
+
+        /* ===== 时间线 ===== */
+        .tl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; margin-top: 40px; position: relative; }
+        .tl::before {
+            content: ""; position: absolute; top: 11px; left: 4%; right: 4%; height: 2px;
+            background: linear-gradient(90deg, rgba(62,125,95,.75), rgba(44,92,69,.75));
+        }
+        .tl-step { position: relative; padding-top: 42px; }
+        .tl-step::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 22px; height: 22px;
+            border-radius: 50%; background: #eef2ec;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 18px rgba(62,125,95,.35);
+        }
+        .tl-phase { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 8px; }
+        .tl-name { font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+        .tl-desc { font-size: 1.08rem; line-height: 1.7; color: var(--ink-soft); }
+
+        /* ===== 章节过渡页 ===== */
+        .chap-num {
+            font-size: 11rem; font-weight: 700; line-height: 0.9;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(62, 125, 95, 0.8);
+            letter-spacing: 0.04em;
+            margin-bottom: 18px;
+        }
+        .chap-title { font-size: 3.4rem; font-weight: 700; color: var(--ink); margin-bottom: 20px; white-space: nowrap; }
+        .glass-bar { width: 108px; height: 7px; border-radius: 4px; margin-bottom: 30px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-deep)); }
+
+        /* ===== 封面 / 结尾底部 meta ===== */
+        .foot-meta {
+            display: flex; gap: 40px;
+            border-top: 1px solid var(--glass-line);
+            padding-top: 22px; margin-top: 44px;
+            font-size: 1.02rem; color: var(--ink-faint); letter-spacing: 0.04em;
+        }
+
+        .cover-grid { display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; width: 100%; }
+        .center-col { text-align: center; }
+        .center-col .glass-bar { margin-left: auto; margin-right: auto; }
+        .center-col .lede { margin-left: auto; margin-right: auto; }
+
+        /* ===== 导航控件（浅色玻璃化） ===== */
+        .controls {
+            position: fixed; bottom: 30px; right: 46px; z-index: 10;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .controls button {
+            padding: 11px 24px; border-radius: 999px; cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.80);
+            background: linear-gradient(135deg, rgba(255,255,255,.66), rgba(255,255,255,.34));
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 0 10px 24px -10px rgba(30,64,48,.45);
+            font-family: inherit; font-size: 0.95rem; color: var(--ink);
+            transition: all 0.3s;
+        }
+        .controls button:hover { background: var(--accent); color: #ffffff; transform: translateY(-2px); }
+        .counter { font-size: 0.95rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+
+        .hint {
+            position: fixed; bottom: 36px; left: 48px; z-index: 10;
+            font-size: 0.85rem; color: var(--ink-faint); letter-spacing: 0.12em;
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px; z-index: 20;
+            background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+            transition: width 0.35s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* ===== 小屏降档（固定 rem 体系，媒体查询整体降档） ===== */
+        @media (max-width: 1240px) {
+            h1 { font-size: 4.6rem; } h2 { font-size: 2.3rem; }
+            .big-num { font-size: 6rem; }
+            .chap-num { font-size: 8.5rem; } .chap-title { font-size: 2.7rem; }
+            .row-cards { gap: 18px; }
+        }
+        @media (max-width: 960px) {
+            h1 { font-size: 3.4rem; white-space: normal; }
+            h2 { font-size: 1.9rem; white-space: normal; }
+            .lede { font-size: 1.25rem; }
+            .big-num { font-size: 4.4rem; } .big-num small { font-size: 1.8rem; }
+            .chap-num { font-size: 6rem; } .chap-title { font-size: 2.1rem; }
+            .row-cards, .mini-stats { grid-template-columns: 1fr; gap: 14px; }
+            .cover-grid { grid-template-columns: 1fr; }
+            .cube-scene { display: none; }
+            .donut-row { grid-template-columns: 1fr; gap: 20px; }
+            .donut-row svg { max-width: 220px; margin: 0 auto; display: block; }
+            .tl { grid-template-columns: 1fr; gap: 18px; }
+            .tl::before { display: none; }
+            .tl-step { padding-top: 0; padding-left: 40px; }
+            .tl-step::before { top: 2px; }
+            .gtable td { font-size: 1rem; padding: 12px 8px; }
+            .gtable th { padding: 12px 8px 10px; }
+            .hint { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .glow, .sheen::before, .slide.active, .slide.active [class*="r"] { animation: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+    <div class="grain"></div>
+    <div class="sheen"></div>
+    <div class="progress-bar" id="progressFill"></div>
+
+    <div class="stage">
+
+        <!-- 1 封面页 -->
+        <section class="slide active">
+            <div class="cover-grid">
+                <div class="wrap">
+                    <div class="kicker r1">QINGYU · 原叶冷萃茶新品发布</div>
+                    <h1 class="r2">青屿</h1>
+                    <p class="lede r3">把一座茶山，搬进城市的下午。</p>
+                    <p class="sub r4">青屿首套原叶冷萃系列，用一整夜的慢，换你一个清醒的下午。</p>
+                    <div class="foot-meta r5">
+                        <span>青屿茶事 QINGYU</span>
+                        <span>2026 秋季新品发布会</span>
+                        <span>演讲人 · 林晚</span>
+                    </div>
+                </div>
+                <div class="cube-scene r3">
+                    <div class="cube"></div>
+                    <div class="cube small"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2 章节过渡页 01 -->
+        <section class="slide">
+            <div class="wrap center-col">
+                <div class="chap-num r1">01</div>
+                <div class="glass-bar r2"></div>
+                <h2 class="chap-title r3">山中取味</h2>
+                <p class="lede r4">好味道不赶时间，我们也不。</p>
+            </div>
+        </section>
+
+        <!-- 3 要点页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">01 · 山中取味</div>
+                <h2 class="r2">三件事，做好一杯冷萃</h2>
+                <div class="row-cards">
+                    <div class="glass row-card r3">
+                        <span class="tag">LEAF</span>
+                        <div class="name">原叶直萃</div>
+                        <div class="desc">明前单芽整叶灌装，拒绝碎茶与茶粉，一片叶子走到底。</div>
+                    </div>
+                    <div class="glass row-card r4">
+                        <span class="tag">BREW</span>
+                        <div class="name">冷萃十二时</div>
+                        <div class="desc">4°C 慢萃十二个小时，苦涩沉底，甘甜上浮。</div>
+                    </div>
+                    <div class="glass row-card r5">
+                        <span class="tag">PURE</span>
+                        <div class="name">零添加</div>
+                        <div class="desc">配料表只有一行：茶。香精、糖与防腐剂，一概没有。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 数据大字页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">冷萃工艺 · 时间给的答案</div>
+                <div class="big-num r2">12<small>小时慢萃</small></div>
+                <p class="lede r3">在 4°C 的安静里，茶叶自己慢慢打开。</p>
+                <div class="mini-stats">
+                    <div class="glass mini-stat r4">
+                        <div class="n"><b>0</b> 添加</div>
+                        <div class="t">配料表只有原叶茶一项，干净得像山里的风</div>
+                    </div>
+                    <div class="glass mini-stat r5">
+                        <div class="n"><b>4</b> °C</div>
+                        <div class="t">全程低温慢萃，苦涩物质留在夜里不上桌</div>
+                    </div>
+                    <div class="glass mini-stat r6">
+                        <div class="n"><b>72</b> 小时</div>
+                        <div class="t">冷藏最佳赏味期，鲜活得像刚离开茶树</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5 柱状图页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">实验室数据 · 同批茶样双盲对比</div>
+                <h2 class="r2">慢一点，回甘长一点</h2>
+                <div class="glass chart-shell r3">
+                    <svg viewBox="0 0 620 236" width="100%" role="img" aria-label="五种萃取方式回甘时长柱状图">
+                        <defs>
+                            <linearGradient id="barG" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#6fae8c"/>
+                                <stop offset="100%" stop-color="#2c5c45"/>
+                            </linearGradient>
+                        </defs>
+                        <line x1="40" y1="34"  x2="600" y2="34"  stroke="#1d2b24" stroke-opacity="0.10" stroke-width="1"/>
+                        <line x1="40" y1="82"  x2="600" y2="82"  stroke="#1d2b24" stroke-opacity="0.10" stroke-width="1"/>
+                        <line x1="40" y1="130" x2="600" y2="130" stroke="#1d2b24" stroke-opacity="0.10" stroke-width="1"/>
+                        <line x1="40" y1="178" x2="600" y2="178" stroke="#1d2b24" stroke-opacity="0.20" stroke-width="1"/>
+                        <text x="30" y="38"  font-size="12" fill="#7d9186" text-anchor="end">48s</text>
+                        <text x="30" y="86"  font-size="12" fill="#7d9186" text-anchor="end">32s</text>
+                        <text x="30" y="134" font-size="12" fill="#7d9186" text-anchor="end">16s</text>
+                        <rect x="64"  y="124" width="58" height="54"  rx="9" fill="url(#barG)" opacity="0.82"/>
+                        <rect x="166" y="109" width="58" height="69"  rx="9" fill="url(#barG)" opacity="0.74"/>
+                        <rect x="268" y="82"  width="58" height="96"  rx="9" fill="url(#barG)" opacity="0.88"/>
+                        <rect x="370" y="40"  width="58" height="138" rx="9" fill="url(#barG)"/>
+                        <rect x="472" y="46"  width="58" height="132" rx="9" fill="url(#barG)" opacity="0.80"/>
+                        <text x="93"  y="112" font-size="15" font-weight="700" fill="#1d2b24" text-anchor="middle">18</text>
+                        <text x="195" y="97"  font-size="15" font-weight="700" fill="#1d2b24" text-anchor="middle">23</text>
+                        <text x="297" y="70"  font-size="15" font-weight="700" fill="#1d2b24" text-anchor="middle">32</text>
+                        <text x="399" y="28"  font-size="15" font-weight="700" fill="#2c5c45" text-anchor="middle">46</text>
+                        <text x="501" y="34"  font-size="15" font-weight="700" fill="#1d2b24" text-anchor="middle">44</text>
+                        <text x="93"  y="204" font-size="15" fill="#1d2b24" text-anchor="middle">热萃</text>
+                        <text x="195" y="204" font-size="15" fill="#1d2b24" text-anchor="middle">冰萃</text>
+                        <text x="297" y="204" font-size="15" fill="#1d2b24" text-anchor="middle">8h 冷萃</text>
+                        <text x="399" y="204" font-size="15" fill="#1d2b24" text-anchor="middle">12h 冷萃</text>
+                        <text x="501" y="204" font-size="15" fill="#1d2b24" text-anchor="middle">16h 冷萃</text>
+                        <text x="310" y="228" font-size="12" fill="#7d9186" text-anchor="middle">回甘时长 = 咽下后口腔内持续回甘的秒数（10 人双盲测试均值）</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6 章节过渡页 02 -->
+        <section class="slide">
+            <div class="wrap center-col">
+                <div class="chap-num r1">02</div>
+                <div class="glass-bar r2"></div>
+                <h2 class="chap-title r3">入盏</h2>
+                <p class="lede r4">从今天下午三点的一杯开始。</p>
+            </div>
+        </section>
+
+        <!-- 7 表格页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">02 · 冷萃系列</div>
+                <h2 class="r2">四款风味一览</h2>
+                <div class="glass table-shell r3">
+                    <table class="gtable">
+                        <thead>
+                            <tr><th>款式</th><th>茶底</th><th>风味</th><th>适饮时刻</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>云雾绿</td><td>高山云雾绿茶</td><td>鲜爽 · 兰花香</td><td>清晨 · 开工之前</td></tr>
+                            <tr><td>岩桂</td><td>桂花窨制乌龙</td><td>甜润 · 桂花香</td><td>午后 · 三点钟</td></tr>
+                            <tr><td>柑白</td><td>陈三年白牡丹</td><td>清甜 · 陈皮香</td><td>傍晚 · 阅读时</td></tr>
+                            <tr><td>夜箐</td><td>炭焙凤凰单丛</td><td>醇厚 · 蜜兰香</td><td>夜里 · 独处时</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="chart-note r4">全部款式默认 4 瓶起订，也提供 12 瓶混合装，一次喝遍整座茶山。</p>
+            </div>
+        </section>
+
+        <!-- 8 环形图页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">内测报告 · 首批体验茶友</div>
+                <h2 class="r2">一杯茶，把下午慢下来</h2>
+                <div class="donut-row">
+                    <div class="r3">
+                        <svg viewBox="0 0 180 180" width="100%" role="img" aria-label="饮用时段占比环形图">
+                            <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(29,43,36,0.07)" stroke-width="20"/>
+                            <g transform="rotate(-90 90 90)">
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="#3e7d5f" stroke-width="20"
+                                        stroke-dasharray="185.0 217.1" stroke-dashoffset="0" stroke-linecap="round"/>
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(29,43,36,0.40)" stroke-width="20"
+                                        stroke-dasharray="124.7 277.4" stroke-dashoffset="-185.0" stroke-linecap="round"/>
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(62,125,95,0.30)" stroke-width="20"
+                                        stroke-dasharray="92.5 309.6" stroke-dashoffset="-309.7" stroke-linecap="round"/>
+                            </g>
+                            <text x="90" y="86" font-size="30" font-weight="700" fill="#1d2b24" text-anchor="middle">89%</text>
+                            <text x="90" y="110" font-size="12.5" fill="#7d9186" text-anchor="middle">内测后愿意回购</text>
+                        </svg>
+                    </div>
+                    <ul class="legend r4">
+                        <li><span class="dot" style="background:#3e7d5f;"></span><span class="lname">午后 14–18 点</span><span class="ldesc">46% · 三点钟的仪式感</span></li>
+                        <li><span class="dot" style="background:rgba(29,43,36,0.40);"></span><span class="lname">清晨 6–10 点</span><span class="ldesc">31% · 一天的第一口清醒</span></li>
+                        <li><span class="dot" style="background:rgba(62,125,95,0.30);"></span><span class="lname">夜间 20–23 点</span><span class="ldesc">23% · 睡前最后一盏茶</span></li>
+                    </ul>
+                </div>
+                <p class="chart-note r5">数据来源：2026 年 6 月青屿内测计划饮用日志（n = 2,000 位用户）。</p>
+            </div>
+        </section>
+
+        <!-- 9 时间线页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">上市计划</div>
+                <h2 class="r2">青屿，三步到你手上</h2>
+                <div class="tl">
+                    <div class="tl-step r3">
+                        <div class="tl-phase">9 月 12 日</div>
+                        <div class="tl-name">开启众筹</div>
+                        <div class="tl-desc">品牌店与众筹平台同步上线，早鸟加赠青瓷对杯一对。</div>
+                    </div>
+                    <div class="tl-step r4">
+                        <div class="tl-phase">10 月 20 日</div>
+                        <div class="tl-name">正式首发</div>
+                        <div class="tl-desc">四款风味全渠道开售，线下茶空间同日开门迎客。</div>
+                    </div>
+                    <div class="tl-step r5">
+                        <div class="tl-phase">11 月起</div>
+                        <div class="tl-name">茶山溯源</div>
+                        <div class="tl-desc">直播走进武夷与福鼎的山场，订阅用户专享明前头采。</div>
+                    </div>
+                </div>
+                <p class="chart-note r6" style="margin-top: 34px;">首发期提供「不合口味免费换款」，让每一瓶都合你的下午。</p>
+            </div>
+        </section>
+
+        <!-- 10 结尾页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">THANK YOU</div>
+                <h1 class="r2" style="font-size: 5.2rem;">把茶山，留在杯子里</h1>
+                <p class="lede r3">青屿冷萃系列，9 月 12 日开启众筹——慢一点，回甘长一点。</p>
+                <div class="foot-meta r4">
+                    <span>青屿茶事 QINGYU</span>
+                    <span>www.qingyu.example</span>
+                    <span>媒体联络 · press@qingyu.example</span>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="controls">
+        <button data-action="prev">上一页</button>
+        <span class="counter" id="pageCounter">1 / 10</span>
+        <button data-action="next">下一页</button>
+    </div>
+    <div class="hint">滚轮 / ← → 翻页 · F 全屏</div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        // 滚轮翻页：节流 750ms，避免触控板惯性连翻
+        let wheelLock = false;
+        window.addEventListener('wheel', (e) => {
+            if (wheelLock || Math.abs(e.deltaY) < 24) return;
+            wheelLock = true;
+            setTimeout(() => { wheelLock = false; }, 750);
+            e.deltaY > 0 ? next() : prev();
+        }, { passive: true });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

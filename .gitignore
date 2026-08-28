@@ -1,0 +1,18 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node (self-check script dependencies, if run locally)
+node_modules/
+package-lock.json
+
+# Logs & temp
+*.log
+qa-snaps/

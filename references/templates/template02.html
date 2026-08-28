@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山雾 · 品牌视觉升级提案 — 流光毛玻璃模板</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --text-color: #2d3748;
+            --accent-color: #6a11cb;
+            --deco-1: #a18cd1;
+            --deco-2: #fbc2eb;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            color: var(--text-color);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #e0c3fc, #8ec5fc, #fbc2eb, #a18cd1);
+            background-size: 400% 400%;
+            animation: liquidGradient 15s ease infinite;
+        }
+
+        /* 液态流动背景动画 */
+        @keyframes liquidGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ==================== 演示容器与毛玻璃 ==================== */
+        .presentation-container {
+            position: relative;
+            width: 85vw;
+            height: 82vh;
+            max-width: 1100px;
+            max-height: 760px;
+            border-radius: 28px;
+            overflow: hidden;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slides-wrapper { flex: 1; position: relative; }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            padding: clamp(2.2rem, 5vh, 3.4rem) clamp(2.4rem, 4.5vw, 4rem);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .slide.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+        /* ==================== 优雅排版 ==================== */
+        .kicker {
+            font-size: 1rem;
+            letter-spacing: .28em;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .slide-header { margin-bottom: 1.6rem; }
+
+        .slide-header h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+            line-height: 1.25;
+        }
+
+        .slide-header h2 {
+            font-size: 2.5rem;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            line-height: 1.3;
+        }
+        .slide-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--deco-1), var(--deco-2));
+            border-radius: 2px;
+        }
+
+        .slide-content {
+            font-size: 1.25rem;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+        .slide-content p { margin-bottom: 1.2rem; }
+
+        /* ✦ 优雅的列表 */
+        .slide-content ul { list-style: none; margin-left: 1rem; margin-top: .4rem; }
+        .slide-content ul li {
+            position: relative;
+            padding-left: 1.6rem;
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+        .slide-content ul li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--deco-1);
+        }
+        .slide-content li b { color: var(--text-color); }
+
+        /* 优雅的网格排版 */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.6rem;
+            margin-top: .6rem;
+        }
+        .grid-cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; margin-top: .6rem; }
+
+        .grid-item {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 1.5rem 1.7rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .grid-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .grid-item h3 { margin-bottom: .75rem; color: #2d3748; font-size: 1.3rem; }
+        .grid-item p { margin-bottom: 0; font-size: 1.1rem; line-height: 1.7; color: #4a5568; }
+
+        /* 数字与色卡 */
+        .stat-num {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .stat-label { margin-top: .5rem; font-size: 1.15rem; color: var(--text-color); font-weight: 600; }
+        .stat-note { margin-top: .25rem; font-size: .98rem; color: #718096; }
+
+        .swatch { display: block; width: 100%; height: 64px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.7); box-shadow: inset 0 0 0 3px rgba(255,255,255,0.4); }
+        .sw-name { margin-top: .8rem; font-size: 1.25rem; font-weight: 700; color: var(--text-color); }
+        .sw-name em { font-style: normal; font-weight: 400; font-size: .85em; color: #718096; margin-left: .4em; }
+        .sw-use { margin-top: .4rem; font-size: 1.05rem; color: #4a5568; line-height: 1.65; }
+
+        .glyph {
+            font-size: 5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glyph-name { margin-top: .6rem; font-size: 1.15rem; font-weight: 600; color: var(--text-color); }
+
+        .note {
+            background: rgba(255, 255, 255, 0.32);
+            border-left: 4px solid var(--deco-1);
+            border-radius: 0 14px 14px 0;
+            padding: .95rem 1.3rem;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: #4a5568;
+            margin-top: 1.4rem;
+        }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: .85rem 1rem;
+            text-align: left;
+            font-size: 1.15rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(45, 55, 72, 0.12);
+        }
+        .table th { color: var(--text-color); font-weight: 700; border-bottom: 2px solid var(--deco-1); }
+        .table td:first-child { font-weight: 600; color: var(--text-color); }
+        .table td { color: #4a5568; }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; position: relative; margin-top: .6rem; }
+        .timeline::before { content: ""; position: absolute; top: 9px; left: 3%; right: 3%; height: 2px; background: linear-gradient(to right, var(--deco-1), var(--deco-2)); opacity: .6; }
+        .tl-step { position: relative; padding-top: 2.1rem; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 4px solid var(--deco-1); }
+        .tl-phase { font-size: .92rem; color: var(--accent-color); letter-spacing: .14em; margin-bottom: .25rem; font-weight: 600; }
+        .tl-name { font-size: 1.3rem; font-weight: 700; margin-bottom: .45rem; color: var(--text-color); }
+        .tl-desc { font-size: 1.08rem; line-height: 1.7; color: #4a5568; }
+
+        /* 目录 */
+        .toc { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-left: 0; margin-top: .4rem; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 1rem;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            padding: 1.05rem 1.4rem;
+            margin-bottom: 0;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .toc li:hover { transform: translateY(-4px); background: rgba(255,255,255,0.5); }
+        .toc li::before { content: none; }
+        .toc .no { font-size: 1.4rem; font-weight: 700; color: var(--accent-color); font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.28rem; font-weight: 700; color: var(--text-color); }
+        .toc .d { margin-left: auto; font-size: .98rem; color: #718096; }
+
+        /* 封面 */
+        .pill {
+            display: inline-block;
+            padding: .45rem 1.3rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid var(--glass-border);
+            font-size: .9rem;
+            letter-spacing: .24em;
+            color: var(--accent-color);
+            align-self: center;
+        }
+        .cover-foot {
+            margin-top: 2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(45,55,72,.15);
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            font-size: 1.05rem;
+            color: #718096;
+        }
+
+        /* ==================== 导航控制器 ==================== */
+        .navigation {
+            padding: 1.1rem 2.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: .7rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+        .nav-btn:hover {
+            background: #ffffff;
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+        }
+        .nav-btn:active { transform: scale(0.98); }
+        .page-indicator {
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-weight: 500;
+            opacity: 0.8;
+            font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 900px) {
+            .slide-header h1 { font-size: 2.2rem; } .slide-header h2 { font-size: 1.75rem; } .slide-content, .slide-content li { font-size: 1.1rem; }
+            .grid-layout, .grid-cols-3, .timeline, .toc { grid-template-columns: 1fr; gap: .9rem; }
+            .presentation-container { width: 94vw; height: 90vh; }
+            .toc .d { display: none; }
+            .navigation { padding: 1rem 1.4rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body { animation: none; }
+            .slide { transition: opacity .3s ease; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-container">
+
+        <div class="slides-wrapper">
+
+            <!-- 1 封面 -->
+            <section class="slide active" style="align-items: center; text-align: center;">
+                <span class="pill">BRAND REFRESH · 2026</span>
+                <div class="slide-header" style="margin-top: 1.4rem;">
+                    <h1>山雾</h1>
+                    <p style="font-size: 1.2rem; opacity: .75; margin-top: .8rem;">视觉识别系统升级提案</p>
+                </div>
+                <div class="slide-content" style="text-align: center; margin-top: 1rem;">
+                    <p>山雾的茶要慢泡，品牌也要慢炼——这是一次面向未来三年的视觉升级。</p>
+                </div>
+                <div class="cover-foot">
+                    <span>亦禾设计 · 舒晚</span>
+                    <span>2026 年 3 月</span>
+                </div>
+            </section>
+
+            <!-- 2 目录 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <h2>提案的四个部分</h2>
+                </div>
+                <ul class="toc">
+                    <li><span class="no">01</span><span class="t">现状诊断</span><span class="d">被稀释的山雾感</span></li>
+                    <li><span class="no">02</span><span class="t">新标志</span><span class="d">减法之后更耐看</span></li>
+                    <li><span class="no">03</span><span class="t">色彩与字体</span><span class="d">一套可复制的秩序</span></li>
+                    <li><span class="no">04</span><span class="t">应用与落地</span><span class="d">从门头到小程序</span></li>
+                </ul>
+            </section>
+
+            <!-- 3 现状诊断 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <div class="kicker">01 · 现状诊断</div>
+                    <h2>被稀释的山雾感</h2>
+                </div>
+                <div class="slide-content">
+                    <ul>
+                        <li><span><b>扩张失速：</b>门店扩至 120 家，视觉仍停在三年前。</span></li>
+                        <li><span><b>细节失守：</b>标志缩小到杯贴上，细节糊成一团。</span></li>
+                        <li><span><b>风格失稳：</b>促销物料风格随供应商波动。</span></li>
+                        <li><span><b>数字缺位：</b>会员小程序上线后，没有数字端规范。</span></li>
+                    </ul>
+                    <div class="note">街访 200 人：41% 的顾客无法在 3 秒内认出山雾门店。</div>
+                </div>
+            </section>
+
+            <!-- 4 新标志 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <div class="kicker">02 · 新标志</div>
+                    <h2>减法之后，更耐看</h2>
+                </div>
+                <div class="grid-layout">
+                    <div class="grid-item">
+                        <div class="glyph">山</div>
+                        <div class="glyph-name">三峰仍在，笔画减至三笔</div>
+                        <p>保留三峰轮廓，最小可用尺寸 12mm，杯贴与招牌同样清晰。</p>
+                    </div>
+                    <div class="grid-item">
+                        <div class="glyph">雾</div>
+                        <div class="glyph-name">留白改为渐隐弧线</div>
+                        <p>峰与峰之间的留白改为渐隐弧线，呼应茶汤氤氲的气口。</p>
+                    </div>
+                </div>
+                <div class="note">压测通过：新标志缩到 16px 的 favicon 依旧清晰可辨。</div>
+            </section>
+
+            <!-- 5 色彩体系 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <div class="kicker">03 · 色彩</div>
+                    <h2>三种颜色，一套秩序</h2>
+                </div>
+                <div class="grid-cols-3">
+                    <div class="grid-item">
+                        <span class="swatch" style="background: #3A5F7D;"></span>
+                        <div class="sw-name">山黛 <em>#3A5F7D · 主色</em></div>
+                        <p class="sw-use">门头、主视觉与会员卡。</p>
+                    </div>
+                    <div class="grid-item">
+                        <span class="swatch" style="background: #F6F1E7;"></span>
+                        <div class="sw-name">茶白 <em>#F6F1E7 · 底色</em></div>
+                        <p class="sw-use">杯身、包装纸与空间墙面。</p>
+                    </div>
+                    <div class="grid-item">
+                        <span class="swatch" style="background: #C97B4A;"></span>
+                        <div class="sw-name">焰糖 <em>#C97B4A · 点缀色</em></div>
+                        <p class="sw-use">节令限定与促销物料，全年占比不超过 10%。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6 字体系统 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <div class="kicker">03 · 字体</div>
+                    <h2>让字体先讲清楚规矩</h2>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr><th>用途</th><th>字体</th><th>字重与场景</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>标题</td><td>思源宋体</td><td>SemiBold · 门店海报与包装主视觉</td></tr>
+                        <tr><td>正文</td><td>思源黑体</td><td>Regular · 菜单、小程序与公众号</td></tr>
+                        <tr><td>价格数字</td><td>表格等宽数字</td><td>数字不跳动，收银小票同源</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 7 应用场景 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <div class="kicker">04 · 应用</div>
+                    <h2>从门头到小程序</h2>
+                </div>
+                <div class="timeline">
+                    <div class="tl-step">
+                        <div class="tl-phase">第一步</div>
+                        <div class="tl-name">门头</div>
+                        <div class="tl-desc">黛蓝底发光字，夜间识别度优先。</div>
+                    </div>
+                    <div class="tl-step">
+                        <div class="tl-phase">第二步</div>
+                        <div class="tl-name">包装</div>
+                        <div class="tl-desc">茶白杯身加雾线纹样，杯套即广告位。</div>
+                    </div>
+                    <div class="tl-step">
+                        <div class="tl-phase">第三步</div>
+                        <div class="tl-name">数字端</div>
+                        <div class="tl-desc">小程序启动页与会员卡，同步新视觉。</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8 落地节奏 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <div class="kicker">04 · 落地</div>
+                    <h2>三个月，分三步走</h2>
+                </div>
+                <div class="timeline">
+                    <div class="tl-step">
+                        <div class="tl-phase">4 月</div>
+                        <div class="tl-name">试点换装</div>
+                        <div class="tl-desc">试点 10 家门店，收集一个月经营数据。</div>
+                    </div>
+                    <div class="tl-step">
+                        <div class="tl-phase">5 月</div>
+                        <div class="tl-name">全面换新</div>
+                        <div class="tl-desc">包装与物料全面换新，旧物料自然耗尽不返工。</div>
+                    </div>
+                    <div class="tl-step">
+                        <div class="tl-phase">6 月</div>
+                        <div class="tl-name">数字同步</div>
+                        <div class="tl-desc">数字端与外卖平台头像、店招同步上线。</div>
+                    </div>
+                </div>
+                <div class="note">节奏原则：物料随用随换，不做一次性报废式替换。</div>
+            </section>
+
+            <!-- 9 成效预期 -->
+            <section class="slide">
+                <div class="slide-header">
+                    <div class="kicker">04 · 预期</div>
+                    <h2>三个月后的答卷</h2>
+                </div>
+                <div class="grid-cols-3">
+                    <div class="grid-item">
+                        <div class="stat-num">+23%</div>
+                        <div class="stat-label">品牌辨识度提升</div>
+                        <div class="stat-note">试点店与对照店 A/B 测试</div>
+                    </div>
+                    <div class="grid-item">
+                        <div class="stat-num">-12%</div>
+                        <div class="stat-label">单店物料制作成本</div>
+                        <div class="stat-note">模板标准化之后</div>
+                    </div>
+                    <div class="grid-item">
+                        <div class="stat-num">5 → 2 天</div>
+                        <div class="stat-label">上新设计周期</div>
+                        <div class="stat-note">调用模板库直接改稿</div>
+                    </div>
+                </div>
+                <div class="note">以上为 10 家试点门店四周经营记录，与同商圈对照门店比较得出。</div>
+            </section>
+
+            <!-- 10 结尾 -->
+            <section class="slide" style="align-items: center; text-align: center;">
+                <div class="slide-header" style="margin-bottom: 1rem;">
+                    <h1 style="font-size: 3.5rem;">让山雾，被一眼认出</h1>
+                </div>
+                <div class="slide-content" style="text-align: center;">
+                    <p>提案通过后 4 月启动试点，欢迎随时到试点门店看真实效果。</p>
+                </div>
+                <div class="cover-foot">
+                    <span>亦禾设计 · 舒晚</span>
+                    <span>shanwu@yihe.design</span>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" data-action="prev">上一页</button>
+            <span class="page-indicator" id="pageCounter">1 / 10</span>
+            <button class="nav-btn" data-action="next">下一页</button>
+        </div>
+
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

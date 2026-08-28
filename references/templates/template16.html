@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星阑 XINGLAN · AI 创作引擎 2.0 发布 — 深空蓝调玻璃 Keynote 模板</title>
+    <style>
+        :root {
+            --bg: #0a0f1e;              /* 深空近黑 */
+            --ink: #eef2ff;             /* 星霜白 */
+            --ink-soft: #b6c1de;        /* 次级蓝灰 */
+            --ink-faint: #8993b3;       /* 弱化 */
+            --accent: #6f9bff;          /* 星芒蓝 */
+            --accent-deep: #4a6fd4;     /* 深空蓝（渐变收尾） */
+            --glass-fill-a: rgba(255, 255, 255, 0.10);
+            --glass-fill-b: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-line: rgba(238, 242, 255, 0.12);
+            --card-shadow: 0 34px 80px -26px rgba(0, 0, 0, 0.75);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        /* ===== 深空氛围：星芒蓝/深空蓝径向光晕 + 极细噪点 ===== */
+        .glow { position: fixed; border-radius: 50%; filter: blur(95px); pointer-events: none; z-index: 0; }
+        .g1 {
+            width: 56vw; height: 56vw; left: -14vw; top: -20vw;
+            background: radial-gradient(circle, rgba(111, 155, 255, 0.17) 0%, rgba(111, 155, 255, 0) 70%);
+            animation: drift1 26s ease-in-out infinite alternate;
+        }
+        .g2 {
+            width: 48vw; height: 48vw; right: -12vw; bottom: -16vw;
+            background: radial-gradient(circle, rgba(74, 111, 212, 0.15) 0%, rgba(74, 111, 212, 0) 70%);
+            animation: drift2 32s ease-in-out infinite alternate;
+        }
+        .g3 {
+            width: 30vw; height: 30vw; right: 16vw; top: -10vw;
+            background: radial-gradient(circle, rgba(238, 242, 255, 0.05) 0%, rgba(238, 242, 255, 0) 72%);
+            animation: drift1 22s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes drift1 { to { transform: translate(6vw, 5vh) scale(1.08); } }
+        @keyframes drift2 { to { transform: translate(-5vw, -4vh) scale(1.10); } }
+
+        /* 极细噪点：纯 CSS 点阵纹理（零依赖） */
+        .grain {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1;
+            background-image: radial-gradient(rgba(238, 242, 255, 0.5) 0.5px, transparent 0.5px);
+            background-size: 4px 4px;
+            opacity: 0.05;
+        }
+
+        /* ===== 循环扫光：每 8s 一道倾斜柔光，白透明度 ≤8% ===== */
+        .sheen { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; }
+        .sheen::before {
+            content: ""; position: absolute; top: -25%; bottom: -25%; width: 36%;
+            left: -45%; transform: skewX(-16deg);
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0) 100%);
+            animation: sweep 8s ease-in-out infinite;
+        }
+        @keyframes sweep {
+            0%, 52% { left: -45%; }
+            82%, 100% { left: 150%; }
+        }
+
+        /* ===== 幻灯片：每页一个 100vh 全屏 section ===== */
+        .stage { position: relative; width: 100%; height: 100vh; z-index: 3; }
+        .slide {
+            position: absolute; inset: 0;
+            display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            padding: clamp(40px, 7vh, 72px) clamp(48px, 6.5vw, 116px);
+            overflow: hidden;
+        }
+        .slide.active { display: flex; animation: fadeIn 0.7s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(22px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 元素进场：淡入上移 0.6s，同级错落 80ms */
+        .slide.active .r1 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .06s both; }
+        .slide.active .r2 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .14s both; }
+        .slide.active .r3 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .22s both; }
+        .slide.active .r4 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .30s both; }
+        .slide.active .r5 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .38s both; }
+        .slide.active .r6 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .46s both; }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wrap { width: 100%; max-width: 1210px; }
+
+        /* ===== Keynote 排版层级 ===== */
+        .kicker {
+            font-size: 1rem; font-weight: 600;
+            letter-spacing: 0.34em; text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 26px;
+        }
+        h1 {
+            font-size: 6rem; font-weight: 700;
+            line-height: 1.06; letter-spacing: 0.02em;
+            color: var(--ink);
+            margin-bottom: 26px;
+            white-space: nowrap;
+        }
+        h2 {
+            font-size: 2.75rem; font-weight: 700;
+            line-height: 1.15; letter-spacing: 0.01em;
+            color: var(--ink);
+            margin-bottom: 18px;
+            white-space: nowrap;
+        }
+        .lede {
+            font-size: 1.5rem; font-weight: 400;
+            line-height: 1.7; color: var(--ink-soft);
+            max-width: 46em;
+            margin-bottom: 18px;
+        }
+        .sub {
+            font-size: 1.15rem; line-height: 1.75;
+            color: var(--ink-faint);
+            max-width: 52em;
+        }
+
+        /* ===== 深色玻璃卡片：深蓝半透明 + backdrop blur + 内侧亮边 + 深投影 + 彩虹色散（更明显） ===== */
+        .glass {
+            position: relative;
+            background: linear-gradient(135deg, var(--glass-fill-a) 0%, var(--glass-fill-b) 100%);
+            backdrop-filter: blur(22px) saturate(140%);
+            -webkit-backdrop-filter: blur(22px) saturate(140%);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.16),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+                var(--card-shadow);
+            border-radius: 30px;
+        }
+        /* 边缘彩虹色散：红-橙-蓝渐变光晕（深底上更明显，尾段偏星紫） */
+        .glass::before {
+            content: ""; position: absolute; inset: -3px; z-index: -1;
+            border-radius: 33px;
+            background: linear-gradient(118deg,
+                rgba(255, 96, 64, 0.55) 0%,
+                rgba(255, 176, 64, 0.55) 38%,
+                rgba(111, 155, 255, 0.55) 55%,
+                rgba(150, 110, 255, 0.60) 100%);
+            filter: blur(16px);
+            opacity: 0.34;
+        }
+
+        /* ===== 3D 玻璃方块（封面主角，深色版） ===== */
+        .cube-scene { flex-shrink: 0; position: relative; }
+        .cube {
+            width: 208px; height: 208px; border-radius: 34px;
+            transform: rotate3d(1, -0.6, 0.12, 24deg);
+            background:
+                linear-gradient(150deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 46%, rgba(111, 155, 255, 0.12) 100%);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow:
+                inset 0 2px 0 rgba(255, 255, 255, 0.22),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+                inset -14px -18px 34px rgba(111, 155, 255, 0.14),
+                0 46px 90px -22px rgba(0, 0, 0, 0.80);
+            position: relative;
+        }
+        /* 方块棱边彩虹色散 */
+        .cube::before {
+            content: ""; position: absolute; inset: -4px; z-index: -1;
+            border-radius: 38px;
+            background: linear-gradient(118deg,
+                rgba(255, 96, 64, 0.60) 0%, rgba(255, 176, 64, 0.60) 40%,
+                rgba(111, 155, 255, 0.60) 55%, rgba(150, 110, 255, 0.65) 100%);
+            filter: blur(19px);
+            opacity: 0.40;
+        }
+        /* 顶面高光，强化玻璃棱边 */
+        .cube::after {
+            content: ""; position: absolute; left: 8%; right: 42%; top: 6%; height: 26%;
+            border-radius: 22px;
+            background: linear-gradient(115deg, rgba(255, 255, 255, 0.30), rgba(255, 255, 255, 0.02));
+            filter: blur(1px);
+        }
+        .cube.small {
+            width: 96px; height: 96px; border-radius: 20px;
+            position: absolute; right: -52px; bottom: -34px;
+            transform: rotate3d(1, -0.6, 0.12, 24deg);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+                0 26px 52px -16px rgba(0, 0, 0, 0.75);
+        }
+        .cube.small::after { border-radius: 14px; left: 10%; right: 40%; top: 8%; height: 30%; }
+
+        /* ===== 要点玻璃横卡 ===== */
+        .row-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; width: 100%; margin-top: 34px; }
+        .row-card { padding: 30px 30px 26px; }
+        .row-card .tag {
+            display: inline-block; align-self: flex-start;
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.22em;
+            color: var(--accent); margin-bottom: 14px;
+        }
+        .row-card .name { font-size: 1.45rem; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+        .row-card .desc { font-size: 1.1rem; line-height: 1.7; color: var(--ink-soft); }
+
+        /* ===== 数据大字 ===== */
+        .big-num {
+            font-size: 7.5rem; font-weight: 700; line-height: 1.02;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 20px;
+        }
+        .big-num small { font-size: 2.6rem; font-weight: 600; color: var(--ink-soft); margin-left: 8px; }
+        .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; width: 100%; margin-top: 52px; }
+        .mini-stat { padding: 24px 28px; }
+        .mini-stat .n { font-size: 2.4rem; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.15; }
+        .mini-stat .n b { color: var(--accent); }
+        .mini-stat .t { font-size: 1rem; color: var(--ink-faint); margin-top: 8px; line-height: 1.6; }
+
+        /* ===== 图表页通用 ===== */
+        .chart-shell { padding: 34px 38px 26px; width: 100%; margin-top: 30px; }
+        .chart-note { font-size: 1rem; color: var(--ink-faint); margin-top: 16px; line-height: 1.65; }
+
+        /* ===== 玻璃表格（深色） ===== */
+        .table-shell { padding: 12px 34px; width: 100%; margin-top: 30px; }
+        table.gtable { width: 100%; border-collapse: collapse; }
+        .gtable th {
+            text-align: left; font-size: 0.98rem; font-weight: 700;
+            letter-spacing: 0.10em; color: var(--accent);
+            padding: 16px 14px 12px;
+            border-bottom: 1.5px solid rgba(111, 155, 255, 0.45);
+        }
+        .gtable td {
+            font-size: 1.14rem; line-height: 1.6; color: var(--ink-soft);
+            padding: 15px 14px;
+            border-bottom: 1px solid var(--glass-line);
+        }
+        .gtable tr:last-child td { border-bottom: none; }
+        .gtable td:first-child { font-weight: 700; color: var(--ink); }
+        .gtable .num { font-variant-numeric: tabular-nums; }
+
+        /* ===== 环形图图例 ===== */
+        .donut-row { display: grid; grid-template-columns: 300px 1fr; gap: 44px; align-items: center; width: 100%; margin-top: 30px; }
+        .legend { list-style: none; }
+        .legend li { display: flex; align-items: baseline; gap: 14px; padding: 15px 4px; border-bottom: 1px solid var(--glass-line); }
+        .legend li:last-child { border-bottom: none; }
+        .legend .dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; align-self: center; }
+        .legend .lname { font-size: 1.2rem; font-weight: 600; color: var(--ink); }
+        .legend .ldesc { font-size: 1rem; color: var(--ink-faint); margin-left: auto; }
+
+        /* ===== 时间线 ===== */
+        .tl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; margin-top: 40px; position: relative; }
+        .tl::before {
+            content: ""; position: absolute; top: 11px; left: 4%; right: 4%; height: 2px;
+            background: linear-gradient(90deg, rgba(111,155,255,.75), rgba(74,111,212,.75));
+        }
+        .tl-step { position: relative; padding-top: 42px; }
+        .tl-step::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 22px; height: 22px;
+            border-radius: 50%; background: #0a0f1e;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 18px rgba(111,155,255,.45);
+        }
+        .tl-phase { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 8px; }
+        .tl-name { font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+        .tl-desc { font-size: 1.08rem; line-height: 1.7; color: var(--ink-soft); }
+
+        /* ===== 章节过渡页 ===== */
+        .chap-num {
+            font-size: 11rem; font-weight: 700; line-height: 0.9;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(111, 155, 255, 0.8);
+            letter-spacing: 0.04em;
+            margin-bottom: 18px;
+        }
+        .chap-title { font-size: 3.4rem; font-weight: 700; color: var(--ink); margin-bottom: 20px; white-space: nowrap; }
+        .glass-bar { width: 108px; height: 7px; border-radius: 4px; margin-bottom: 30px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-deep)); }
+
+        /* ===== 封面 / 结尾底部 meta ===== */
+        .foot-meta {
+            display: flex; gap: 40px;
+            border-top: 1px solid var(--glass-line);
+            padding-top: 22px; margin-top: 44px;
+            font-size: 1.02rem; color: var(--ink-faint); letter-spacing: 0.04em;
+        }
+
+        .cover-grid { display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; width: 100%; }
+        .center-col { text-align: center; }
+        .center-col .glass-bar { margin-left: auto; margin-right: auto; }
+        .center-col .lede { margin-left: auto; margin-right: auto; }
+
+        /* ===== 导航控件（深色玻璃化） ===== */
+        .controls {
+            position: fixed; bottom: 30px; right: 46px; z-index: 10;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .controls button {
+            padding: 11px 24px; border-radius: 999px; cursor: pointer;
+            border: 1px solid var(--glass-border);
+            background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 10px 24px -10px rgba(0,0,0,.7);
+            font-family: inherit; font-size: 0.95rem; color: var(--ink);
+            transition: all 0.3s;
+        }
+        .controls button:hover { background: var(--accent); color: #0a0f1e; transform: translateY(-2px); }
+        .counter { font-size: 0.95rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+
+        .hint {
+            position: fixed; bottom: 36px; left: 48px; z-index: 10;
+            font-size: 0.85rem; color: var(--ink-faint); letter-spacing: 0.12em;
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px; z-index: 20;
+            background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+            transition: width 0.35s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* ===== 小屏降档（固定 rem 体系，媒体查询整体降档） ===== */
+        @media (max-width: 1240px) {
+            h1 { font-size: 4.6rem; } h2 { font-size: 2.3rem; }
+            .big-num { font-size: 6rem; }
+            .chap-num { font-size: 8.5rem; } .chap-title { font-size: 2.7rem; }
+            .row-cards { gap: 18px; }
+        }
+        @media (max-width: 960px) {
+            h1 { font-size: 3.4rem; white-space: normal; }
+            h2 { font-size: 1.9rem; white-space: normal; }
+            .lede { font-size: 1.25rem; }
+            .big-num { font-size: 4.4rem; } .big-num small { font-size: 1.8rem; }
+            .chap-num { font-size: 6rem; } .chap-title { font-size: 2.1rem; }
+            .row-cards, .mini-stats { grid-template-columns: 1fr; gap: 14px; }
+            .cover-grid { grid-template-columns: 1fr; }
+            .cube-scene { display: none; }
+            .donut-row { grid-template-columns: 1fr; gap: 20px; }
+            .donut-row svg { max-width: 220px; margin: 0 auto; display: block; }
+            .tl { grid-template-columns: 1fr; gap: 18px; }
+            .tl::before { display: none; }
+            .tl-step { padding-top: 0; padding-left: 40px; }
+            .tl-step::before { top: 2px; }
+            .gtable td { font-size: 1rem; padding: 12px 8px; }
+            .gtable th { padding: 12px 8px 10px; }
+            .hint { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .glow, .sheen::before, .slide.active, .slide.active [class*="r"] { animation: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+    <div class="grain"></div>
+    <div class="sheen"></div>
+    <div class="progress-bar" id="progressFill"></div>
+
+    <div class="stage">
+
+        <!-- 1 封面页 -->
+        <section class="slide active">
+            <div class="cover-grid">
+                <div class="wrap">
+                    <div class="kicker r1">XINGLAN · AI 创作引擎 2.0 发布</div>
+                    <h1 class="r2">星阑</h1>
+                    <p class="lede r3">灵感将尽时，星正好亮起。</p>
+                    <p class="sub r4">星阑创作引擎 2.0，把上下文、知识与审美，一次性交到你手边。</p>
+                    <div class="foot-meta r5">
+                        <span>星阑智能 XINGLAN</span>
+                        <span>2026 秋季开发者大会</span>
+                        <span>演讲人 · 沈昭</span>
+                    </div>
+                </div>
+                <div class="cube-scene r3">
+                    <div class="cube"></div>
+                    <div class="cube small"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2 章节过渡页 01 -->
+        <section class="slide">
+            <div class="wrap center-col">
+                <div class="chap-num r1">01</div>
+                <div class="glass-bar r2"></div>
+                <h2 class="chap-title r3">创意加速</h2>
+                <p class="lede r4">工具的终点，是让想法直接落地。</p>
+            </div>
+        </section>
+
+        <!-- 3 要点页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">01 · 创意加速</div>
+                <h2 class="r2">三个引擎，装进一条创作流</h2>
+                <div class="row-cards">
+                    <div class="glass row-card r3">
+                        <span class="tag">MULTIMODAL</span>
+                        <div class="name">万象理解</div>
+                        <div class="desc">文本、图像、音频与网页同屏解析，资料喂进去，结构吐出来。</div>
+                    </div>
+                    <div class="glass row-card r4">
+                        <span class="tag">CO-CREATE</span>
+                        <div class="name">实时共创</div>
+                        <div class="desc">边写边生成、边改边重排，光标停在哪里，灵感就在哪里。</div>
+                    </div>
+                    <div class="glass row-card r5">
+                        <span class="tag">PRIVATE</span>
+                        <div class="name">私有智识</div>
+                        <div class="desc">把团队文档变成专属知识库，引用可溯源，答案更可信。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 数据大字页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">响应速度 · 快到不打断心流</div>
+                <div class="big-num r2">0.9<small>秒 · 首字延迟</small></div>
+                <p class="lede r3">从按下回车到第一个字，比一次眨眼还快一点。</p>
+                <div class="mini-stats">
+                    <div class="glass mini-stat r4">
+                        <div class="n"><b>200</b> 万</div>
+                        <div class="t">单次上下文容量，一次装下整季剧本</div>
+                    </div>
+                    <div class="glass mini-stat r5">
+                        <div class="n"><b>32</b> 种</div>
+                        <div class="t">中英日韩同稿互译，术语与语气不失真</div>
+                    </div>
+                    <div class="glass mini-stat r6">
+                        <div class="n"><b>99.2</b>%</div>
+                        <div class="t">引用溯源准确率，每个论点都有出处</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5 柱状图页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">评测数据 · 六类创作任务人工评测</div>
+                <h2 class="r2">看不见的地方，跑得更快</h2>
+                <div class="glass chart-shell r3">
+                    <svg viewBox="0 0 620 236" width="100%" role="img" aria-label="五类创作任务综合得分柱状图">
+                        <defs>
+                            <linearGradient id="barG" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#8fb3ff"/>
+                                <stop offset="100%" stop-color="#4a6fd4"/>
+                            </linearGradient>
+                        </defs>
+                        <line x1="40" y1="34"  x2="600" y2="34"  stroke="#eef2ff" stroke-opacity="0.08" stroke-width="1"/>
+                        <line x1="40" y1="82"  x2="600" y2="82"  stroke="#eef2ff" stroke-opacity="0.08" stroke-width="1"/>
+                        <line x1="40" y1="130" x2="600" y2="130" stroke="#eef2ff" stroke-opacity="0.08" stroke-width="1"/>
+                        <line x1="40" y1="178" x2="600" y2="178" stroke="#eef2ff" stroke-opacity="0.16" stroke-width="1"/>
+                        <text x="30" y="38"  font-size="12" fill="#8993b3" text-anchor="end">100</text>
+                        <text x="30" y="86"  font-size="12" fill="#8993b3" text-anchor="end">66</text>
+                        <text x="30" y="134" font-size="12" fill="#8993b3" text-anchor="end">33</text>
+                        <rect x="64"  y="50.6" width="58" height="127.4" rx="9" fill="url(#barG)"/>
+                        <rect x="166" y="53.2" width="58" height="124.8" rx="9" fill="url(#barG)" opacity="0.88"/>
+                        <rect x="268" y="54.5" width="58" height="123.5" rx="9" fill="url(#barG)" opacity="0.82"/>
+                        <rect x="370" y="58.5" width="58" height="119.5" rx="9" fill="url(#barG)" opacity="0.88"/>
+                        <rect x="472" y="61.2" width="58" height="116.8" rx="9" fill="url(#barG)" opacity="0.76"/>
+                        <text x="93"  y="40.6" font-size="15" font-weight="700" fill="#8fb3ff" text-anchor="middle">96</text>
+                        <text x="195" y="43.2" font-size="15" font-weight="700" fill="#eef2ff" text-anchor="middle">94</text>
+                        <text x="297" y="44.5" font-size="15" font-weight="700" fill="#eef2ff" text-anchor="middle">93</text>
+                        <text x="399" y="48.5" font-size="15" font-weight="700" fill="#eef2ff" text-anchor="middle">90</text>
+                        <text x="501" y="51.2" font-size="15" font-weight="700" fill="#eef2ff" text-anchor="middle">88</text>
+                        <text x="93"  y="204" font-size="15" fill="#eef2ff" text-anchor="middle">长文写作</text>
+                        <text x="195" y="204" font-size="15" fill="#eef2ff" text-anchor="middle">文案改写</text>
+                        <text x="297" y="204" font-size="15" fill="#eef2ff" text-anchor="middle">摘要提炼</text>
+                        <text x="399" y="204" font-size="15" fill="#eef2ff" text-anchor="middle">代码生成</text>
+                        <text x="501" y="204" font-size="15" fill="#eef2ff" text-anchor="middle">跨语种翻译</text>
+                        <text x="310" y="228" font-size="12" fill="#8993b3" text-anchor="middle">综合得分 = 六类创作任务人工评测均值（满分 100，n = 1,200 份双盲样本）</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6 章节过渡页 02 -->
+        <section class="slide">
+            <div class="wrap center-col">
+                <div class="chap-num r1">02</div>
+                <div class="glass-bar r2"></div>
+                <h2 class="chap-title r3">开始共创</h2>
+                <p class="lede r4">模式已经备好，从下一份空白文档开始。</p>
+            </div>
+        </section>
+
+        <!-- 7 表格页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">02 · 创作模式</div>
+                <h2 class="r2">四种创作模式一览</h2>
+                <div class="glass table-shell r3">
+                    <table class="gtable">
+                        <thead>
+                            <tr><th>模式</th><th>响应</th><th>输出形态</th><th>适用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>灵感模式</td><td>流式</td><td>脑图 · 关键句</td><td>选题 · 立意</td></tr>
+                            <tr><td>初稿模式</td><td>逐段</td><td>长文 · 分节草稿</td><td>报告 · 剧本</td></tr>
+                            <tr><td>精修模式</td><td>逐句</td><td>改写 · 批注对照</td><td>润色 · 降重</td></tr>
+                            <tr><td>排版模式</td><td>整篇</td><td>成稿 · 幻灯大纲</td><td>交付 · 汇报</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="chart-note r4">全部模式支持随时打断与回退，AI 的每一步改动都保留快照，可一键还原。</p>
+            </div>
+        </section>
+
+        <!-- 8 环形图页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">公测数据 · 首批 12,000 位创作者</div>
+                <h2 class="r2">时间，被还给了创意</h2>
+                <div class="donut-row">
+                    <div class="r3">
+                        <svg viewBox="0 0 180 180" width="100%" role="img" aria-label="AI 介入环节占比环形图">
+                            <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(238,242,255,0.07)" stroke-width="20"/>
+                            <g transform="rotate(-90 90 90)">
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="#6f9bff" stroke-width="20"
+                                        stroke-dasharray="176.9 225.2" stroke-dashoffset="0" stroke-linecap="round"/>
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(238,242,255,0.55)" stroke-width="20"
+                                        stroke-dasharray="132.7 269.4" stroke-dashoffset="-176.9" stroke-linecap="round"/>
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(111,155,255,0.30)" stroke-width="20"
+                                        stroke-dasharray="92.5 309.6" stroke-dashoffset="-309.6" stroke-linecap="round"/>
+                            </g>
+                            <text x="90" y="86" font-size="30" font-weight="700" fill="#eef2ff" text-anchor="middle">63%</text>
+                            <text x="90" y="110" font-size="12.5" fill="#8993b3" text-anchor="middle">平均耗时缩短</text>
+                        </svg>
+                    </div>
+                    <ul class="legend r4">
+                        <li><span class="dot" style="background:#6f9bff;"></span><span class="lname">初稿起草</span><span class="ldesc">44% · 从提纲到成文一口气完成</span></li>
+                        <li><span class="dot" style="background:rgba(238,242,255,0.55);"></span><span class="lname">资料整理</span><span class="ldesc">33% · 找资料、读文档、做摘录</span></li>
+                        <li><span class="dot" style="background:rgba(111,155,255,0.30);"></span><span class="lname">润色排版</span><span class="ldesc">23% · 校对、改写与交付格式</span></li>
+                    </ul>
+                </div>
+                <p class="chart-note r5">数据来源：2026 年 8 月星阑公测创作日志（n = 12,000 位用户）。</p>
+            </div>
+        </section>
+
+        <!-- 9 时间线页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">发布计划</div>
+                <h2 class="r2">星阑，三步到你手上</h2>
+                <div class="tl">
+                    <div class="tl-step r3">
+                        <div class="tl-phase">9 月 26 日</div>
+                        <div class="tl-name">开启内测</div>
+                        <div class="tl-desc">官网申请通道开放，首批 5,000 席位先到先得。</div>
+                    </div>
+                    <div class="tl-step r4">
+                        <div class="tl-phase">10 月 31 日</div>
+                        <div class="tl-name">全量公测</div>
+                        <div class="tl-desc">网页与桌面端同步上线，历史会话云端漫游。</div>
+                    </div>
+                    <div class="tl-step r5">
+                        <div class="tl-phase">12 月起</div>
+                        <div class="tl-name">开放生态</div>
+                        <div class="tl-desc">API 与插件市场开放，团队知识库企业版同日发布。</div>
+                    </div>
+                </div>
+                <p class="chart-note r6" style="margin-top: 34px;">内测期全部功能免费开放，正式版保留永久免费额度，创作不设门槛。</p>
+            </div>
+        </section>
+
+        <!-- 10 结尾页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">THANK YOU</div>
+                <h1 class="r2" style="font-size: 5.2rem;">下一次灵感，交给星阑</h1>
+                <p class="lede r3">星阑创作引擎 2.0，9 月 26 日开启内测——灵感将尽时，星正好亮起。</p>
+                <div class="foot-meta r4">
+                    <span>星阑智能 XINGLAN</span>
+                    <span>www.xinglan.example</span>
+                    <span>媒体联络 · press@xinglan.example</span>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="controls">
+        <button data-action="prev">上一页</button>
+        <span class="counter" id="pageCounter">1 / 10</span>
+        <button data-action="next">下一页</button>
+    </div>
+    <div class="hint">滚轮 / ← → 翻页 · F 全屏</div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        // 滚轮翻页：节流 750ms，避免触控板惯性连翻
+        let wheelLock = false;
+        window.addEventListener('wheel', (e) => {
+            if (wheelLock || Math.abs(e.deltaY) < 24) return;
+            wheelLock = true;
+            setTimeout(() => { wheelLock = false; }, 750);
+            e.deltaY > 0 ? next() : prev();
+        }, { passive: true });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

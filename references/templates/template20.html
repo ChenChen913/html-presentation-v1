@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山月茶事 SANYUE · 秋季茶单发布 — 墨绿鎏金竖排卷轴玻璃模板</title>
+    <style>
+        :root {
+            --bg: #161f1a;              /* 墨绿近黑（深潭茶汤） */
+            --ink: #ece7d9;             /* 月白 */
+            --ink-soft: #b8b2a0;        /* 灰茶 */
+            --ink-faint: #7c8272;       /* 苔灰 */
+            --gold: #c9a05c;            /* 鎏金 */
+            --gold-deep: #9a7434;       /* 深金 */
+            --seal: #a83a32;            /* 印章朱 */
+            --line: rgba(236, 231, 217, 0.14);
+            --gold-line: rgba(201, 160, 92, 0.42);
+            --glass-fill-a: rgba(236, 231, 217, 0.09);
+            --glass-fill-b: rgba(201, 160, 92, 0.03);
+            --glass-border: rgba(201, 160, 92, 0.34);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: "Kaiti SC", "STKaiti", "KaiTi", "LXGW WenKai", "Noto Serif SC", "Songti SC", serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        /* ===== 卷轴氛围：远山剪影（两层）+ 极细噪点 + 缓扫光 + 萤火 ===== */
+        .hills { position: fixed; left: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none; }
+        .hills svg { display: block; width: 100%; height: 30vh; }
+
+        .grain {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1;
+            background-image: radial-gradient(rgba(236, 231, 217, 0.55) 0.5px, transparent 0.5px);
+            background-size: 4px 4px;
+            opacity: 0.05;
+        }
+
+        .sheen { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; }
+        .sheen::before {
+            content: ""; position: absolute; top: -25%; bottom: -25%; width: 34%;
+            left: -45%; transform: skewX(-14deg);
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0) 100%);
+            animation: sweep 8s ease-in-out infinite;
+        }
+        @keyframes sweep {
+            0%, 55% { left: -45%; }
+            85%, 100% { left: 150%; }
+        }
+
+        .firefly {
+            position: fixed; z-index: 1; pointer-events: none;
+            width: 4px; height: 4px; border-radius: 50%;
+            background: var(--gold);
+            opacity: 0.22;
+            box-shadow: 0 0 12px rgba(201, 160, 92, 0.55);
+            animation: floaty 9s ease-in-out infinite;
+        }
+        .firefly.f2 { width: 3px; height: 3px; left: 24%; bottom: 30%; animation-duration: 11s; animation-delay: -4s; opacity: 0.16; }
+        .firefly.f3 { width: 5px; height: 5px; left: 71%; bottom: 22%; animation-duration: 13s; animation-delay: -8s; opacity: 0.14; }
+        .firefly.f1 { left: 12%; bottom: 18%; }
+        @keyframes floaty {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(14px, -26px); }
+        }
+
+        /* ===== 幻灯片 ===== */
+        .stage { position: relative; width: 100%; height: 100vh; z-index: 3; }
+        .slide {
+            position: absolute; inset: 0;
+            display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            padding: clamp(44px, 8vh, 84px) clamp(48px, 6.5vw, 116px);
+            overflow: hidden;
+        }
+        .slide.active { display: flex; animation: fadeIn 0.7s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(22px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 元素进场：淡入上移 0.6s，同级错落 80ms */
+        .slide.active .r1 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .06s both; }
+        .slide.active .r2 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .14s both; }
+        .slide.active .r3 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .22s both; }
+        .slide.active .r4 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .30s both; }
+        .slide.active .r5 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .38s both; }
+        .slide.active .r6 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .46s both; }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wrap { width: 100%; max-width: 1210px; }
+
+        /* ===== 竖排工具 ===== */
+        .vt { writing-mode: vertical-rl; letter-spacing: 0.16em; }
+
+        /* ===== 角标（东方化：左上竖排馆名 / 右上汉字纪年） ===== */
+        .corner {
+            position: absolute; z-index: 4;
+            font-size: 0.9rem; color: var(--ink-faint);
+            letter-spacing: 0.22em;
+        }
+        .corner-tl { top: 34px; left: clamp(48px, 6.5vw, 116px); writing-mode: vertical-rl; letter-spacing: 0.3em; }
+        .corner-tr { top: 36px; right: clamp(48px, 6.5vw, 116px); }
+        .corner .gold { color: var(--gold); }
+
+        /* ===== 玻璃月：大圆玻璃 + 月晕呼吸 + 弧面高光 + 金边色散 ===== */
+        .moon {
+            position: absolute; border-radius: 50%;
+            background:
+                radial-gradient(circle at 34% 30%, rgba(236, 231, 217, 0.16) 0%, rgba(236, 231, 217, 0.04) 46%, rgba(201, 160, 92, 0.07) 100%);
+            backdrop-filter: blur(20px) saturate(130%);
+            -webkit-backdrop-filter: blur(20px) saturate(130%);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                inset 0 1px 0 rgba(236, 231, 217, 0.22),
+                inset -18px -22px 46px rgba(154, 116, 52, 0.16),
+                0 40px 90px -30px rgba(0, 0, 0, 0.72);
+        }
+        .moon::before {
+            content: ""; position: absolute; inset: -26px; z-index: -1;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201, 160, 92, 0.22) 0%, rgba(201, 160, 92, 0.05) 55%, rgba(201, 160, 92, 0) 74%);
+            filter: blur(18px);
+            animation: moonBreath 12s ease-in-out infinite alternate;
+        }
+        .moon::after {
+            content: ""; position: absolute; left: 14%; right: 40%; top: 8%; height: 30%;
+            border-radius: 50%;
+            background: linear-gradient(115deg, rgba(236, 231, 217, 0.30), rgba(236, 231, 217, 0.02));
+            filter: blur(6px);
+        }
+        @keyframes moonBreath {
+            from { transform: scale(1); opacity: 0.85; }
+            to { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* ===== 茶盏：同心双环小玻璃圆 ===== */
+        .cup {
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 38% 32%, rgba(236, 231, 217, 0.14) 0%, rgba(201, 160, 92, 0.05) 62%, rgba(201, 160, 92, 0.10) 100%);
+            backdrop-filter: blur(14px) saturate(125%);
+            -webkit-backdrop-filter: blur(14px) saturate(125%);
+            border: 1px solid var(--glass-border);
+            box-shadow: inset 0 1px 0 rgba(236,231,217,.2), 0 24px 50px -20px rgba(0,0,0,.65);
+            position: relative;
+        }
+        .cup::before {
+            content: ""; position: absolute; inset: 16%; border-radius: 50%;
+            border: 1px solid rgba(201, 160, 92, 0.30);
+        }
+        .cup::after {
+            content: ""; position: absolute; inset: 34%; border-radius: 50%;
+            background: radial-gradient(circle at 40% 36%, rgba(201, 160, 92, 0.22), rgba(154, 116, 52, 0.10) 72%);
+            border: 1px solid rgba(201, 160, 92, 0.24);
+        }
+
+        /* ===== 玻璃屏风条（五条屏目录 / 竖卡） ===== */
+        .screen {
+            position: relative;
+            writing-mode: vertical-rl;
+            background: linear-gradient(160deg, var(--glass-fill-a) 0%, var(--glass-fill-b) 100%);
+            backdrop-filter: blur(18px) saturate(130%);
+            -webkit-backdrop-filter: blur(18px) saturate(130%);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                inset 0 1px 0 rgba(236, 231, 217, 0.18),
+                0 30px 60px -24px rgba(0, 0, 0, 0.66);
+            border-radius: 14px;
+        }
+        .screen::before {
+            content: ""; position: absolute; inset: -3px; z-index: -1;
+            border-radius: 17px;
+            background: linear-gradient(126deg,
+                rgba(201, 160, 92, 0.5) 0%,
+                rgba(120, 176, 156, 0.34) 48%,
+                rgba(168, 58, 50, 0.30) 100%);
+            filter: blur(15px);
+            opacity: 0.30;
+        }
+        .screen::after {
+            content: ""; position: absolute; top: 7%; left: 12%; width: 3px; height: 30%;
+            border-radius: 3px;
+            background: linear-gradient(180deg, rgba(236,231,217,.30), rgba(236,231,217,0));
+        }
+
+        /* ===== 印章 ===== */
+        .seal {
+            display: inline-flex; align-items: center; justify-content: center;
+            writing-mode: vertical-rl;
+            background: var(--seal);
+            color: #f3efe4;
+            font-size: 1.12rem; font-weight: 700; letter-spacing: 0.14em;
+            padding: 13px 10px;
+            border-radius: 6px;
+            box-shadow: inset 0 0 0 1.5px rgba(243, 239, 228, 0.34), 0 10px 24px -10px rgba(0, 0, 0, 0.6);
+            transform: rotate(-2.5deg);
+            user-select: none;
+        }
+
+        /* ===== 章回汉字大字（描边空心） ===== */
+        .kan {
+            font-size: 10rem; font-weight: 700; line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(201, 160, 92, 0.62);
+            letter-spacing: 0.06em;
+        }
+        .kan-solid { color: rgba(201, 160, 92, 0.16); -webkit-text-stroke: 0; }
+        .kan-row { display: flex; align-items: flex-start; gap: 40px; }
+
+        /* ===== 排版层级 ===== */
+        .kicker {
+            font-size: 0.92rem; font-weight: 600;
+            letter-spacing: 0.42em;
+            color: var(--gold);
+        }
+        .v-title {
+            writing-mode: vertical-rl;
+            font-size: 4.5rem; font-weight: 700;
+            line-height: 1.14; letter-spacing: 0.2em;
+            color: var(--ink);
+        }
+        .v-title .em { color: var(--gold); }
+        .h2-v {
+            writing-mode: vertical-rl;
+            font-size: 2.5rem; font-weight: 700;
+            line-height: 1.2; letter-spacing: 0.16em;
+        }
+        .lede {
+            font-size: 1.32rem; line-height: 2.0;
+            color: var(--ink-soft);
+            max-width: 38em;
+        }
+        .sub {
+            font-size: 1.08rem; line-height: 1.95;
+            color: var(--ink-faint);
+            max-width: 44em;
+        }
+        .gold-rule { width: 66px; height: 2px; background: linear-gradient(90deg, var(--gold), rgba(201,160,92,0)); }
+        .gold-rule.center { margin-left: auto; margin-right: auto; background: linear-gradient(90deg, rgba(201,160,92,0), var(--gold), rgba(201,160,92,0)); }
+
+        /* ===== 封面：中轴楹联构图 ===== */
+        .cover-moon { width: 330px; height: 330px; right: 14%; top: 9%; }
+        .cover-flex { display: flex; justify-content: center; align-items: flex-start; gap: 62px; position: relative; }
+        .couplet {
+            writing-mode: vertical-rl;
+            font-size: 1.05rem; letter-spacing: 0.4em;
+            color: var(--ink-soft);
+            padding-top: 14px; line-height: 1.4;
+        }
+        .couplet-line { width: 1px; height: 300px; background: linear-gradient(180deg, rgba(201,160,92,.5), rgba(201,160,92,0)); }
+        .cover-seal { position: absolute; left: calc(50% + 120px); bottom: -12px; }
+
+        /* ===== 五条屏目录 ===== */
+        .screens { display: flex; gap: 30px; justify-content: center; align-items: flex-start; margin-top: 40px; }
+        .screens .screen {
+            padding: 30px 22px;
+            min-height: 330px;
+            display: flex; flex-direction: row; align-items: center; gap: 22px;
+        }
+        .screens .screen:nth-child(2) { margin-top: 26px; }
+        .screens .screen:nth-child(3) { margin-top: 8px; }
+        .screens .screen:nth-child(4) { margin-top: 32px; }
+        .screens .screen:nth-child(5) { margin-top: 14px; }
+        .screen .s-no {
+            font-size: 1.5rem; font-weight: 700; color: var(--gold);
+            border-bottom: 1px solid var(--gold-line);
+            padding: 4px 2px 10px;
+        }
+        .screen .s-name {
+            font-size: 1.9rem; font-weight: 700; letter-spacing: 0.3em;
+            color: var(--ink);
+        }
+        .screen .s-sub {
+            font-size: 0.98rem; letter-spacing: 0.2em;
+            color: var(--ink-faint); line-height: 1.7;
+        }
+
+        /* ===== 正文两栏（横排区） ===== */
+        .cols2 {
+            column-count: 2; column-gap: 46px;
+            font-size: 1.04rem; line-height: 2.05;
+            color: var(--ink-soft);
+            text-align: justify;
+        }
+        .cols2 p + p { margin-top: 1.1em; }
+        .cols2 .em-gold { color: var(--gold); font-weight: 700; }
+
+        .split { display: grid; grid-template-columns: auto 1fr; gap: 74px; align-items: stretch; }
+        .split-main { display: flex; flex-direction: column; gap: 26px; }
+
+        /* ===== 细金线表格 ===== */
+        table.gtable { width: 100%; border-collapse: collapse; }
+        .gtable th {
+            text-align: left; font-size: 0.95rem; font-weight: 700;
+            letter-spacing: 0.22em; color: var(--gold);
+            padding: 14px 14px 12px;
+            border-bottom: 1.5px solid var(--gold-line);
+        }
+        .gtable td {
+            font-size: 1.16rem; line-height: 1.65; color: var(--ink-soft);
+            padding: 18px 14px;
+            border-bottom: 1px solid var(--line);
+        }
+        .gtable tr:last-child td { border-bottom: none; }
+        .gtable td:first-child { font-weight: 700; color: var(--ink); }
+        .gtable .num { font-variant-numeric: tabular-nums; }
+        .gtable .dur { color: var(--gold); font-weight: 700; }
+
+        /* ===== 竖向卷轴时间线 ===== */
+        .v-tl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px; position: relative; padding-top: 8px; }
+        .v-tl::before {
+            content: ""; position: absolute; top: 0; height: 44px; left: 50%; width: 1px;
+            background: linear-gradient(180deg, rgba(201,160,92,0) 0%, var(--gold-line) 100%);
+        }
+        .v-tl-item { position: relative; padding-top: 44px; text-align: center; }
+        .v-tl-item::before {
+            content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 15px; height: 15px; border-radius: 50%;
+            background: var(--bg);
+            border: 2.5px solid var(--gold);
+            box-shadow: 0 0 16px rgba(201, 160, 92, 0.4);
+        }
+        .v-tl-item .date { font-size: 0.95rem; letter-spacing: 0.26em; color: var(--gold); margin-bottom: 12px; }
+        .v-tl-item .name { font-size: 1.6rem; font-weight: 700; margin-bottom: 10px; }
+        .v-tl-item .desc { font-size: 1.04rem; line-height: 1.9; color: var(--ink-soft); max-width: 20em; margin: 0 auto; }
+
+        /* ===== 横条数据（鎏金刻度） ===== */
+        .bars { max-width: 780px; width: 100%; }
+        .bar-row { padding: 20px 0; border-bottom: 1px solid var(--line); }
+        .bar-row:last-child { border-bottom: none; }
+        .bar-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 12px; }
+        .bar-head .bname { font-size: 1.22rem; font-weight: 700; }
+        .bar-head .bpct { font-size: 0.98rem; color: var(--ink-faint); letter-spacing: 0.1em; }
+        .bar-head .bval { margin-left: auto; font-size: 1.55rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .bar-track { height: 8px; background: rgba(236, 231, 217, 0.08); border-radius: 2px; overflow: hidden; }
+        .bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold-deep), var(--gold)); border-radius: 2px; }
+        .bar-fill.dim { background: rgba(236, 231, 217, 0.34); }
+        .chart-note { font-size: 0.98rem; color: var(--ink-faint); margin-top: 24px; line-height: 1.8; letter-spacing: 0.06em; }
+
+        /* ===== 信息栏（订阅页） ===== */
+        .info-list { display: grid; grid-template-columns: 1fr 1fr; gap: 0 52px; }
+        .info-item { padding: 19px 0; border-bottom: 1px solid var(--line); }
+        .info-item .lab { font-size: 0.88rem; letter-spacing: 0.3em; color: var(--ink-faint); margin-bottom: 9px; }
+        .info-item .val { font-size: 1.16rem; line-height: 1.7; }
+
+        /* ===== 金句竖排（整页） ===== */
+        .quote-v {
+            writing-mode: vertical-rl;
+            font-size: 3.4rem; font-weight: 700;
+            letter-spacing: 0.2em; line-height: 1.85;
+            height: 430px;
+        }
+        .quote-v span { display: block; }
+        .quote-v .em { color: var(--gold); }
+
+        /* ===== 导航控件（墨金玻璃化） ===== */
+        .controls {
+            position: fixed; bottom: 30px; right: 46px; z-index: 10;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .controls button {
+            padding: 11px 24px; border-radius: 999px; cursor: pointer;
+            border: 1px solid var(--glass-border);
+            background: linear-gradient(135deg, rgba(236,231,217,.10), rgba(236,231,217,.03));
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: inset 0 1px 0 rgba(236,231,217,.18), 0 10px 24px -10px rgba(0,0,0,.7);
+            font-family: inherit; font-size: 0.95rem; color: var(--ink);
+            transition: all 0.3s;
+        }
+        .controls button:hover { background: var(--gold); color: #161f1a; transform: translateY(-2px); }
+        .counter { font-size: 0.95rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+
+        .hint {
+            position: fixed; bottom: 36px; left: 48px; z-index: 10;
+            font-size: 0.85rem; color: var(--ink-faint); letter-spacing: 0.14em;
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px; z-index: 20;
+            background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+            transition: width 0.35s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* ===== 小屏降档 ===== */
+        @media (max-width: 1240px) {
+            .kan { font-size: 7.6rem; }
+            .v-title { font-size: 3.4rem; }
+            .h2-v { font-size: 2rem; }
+            .quote-v { font-size: 2.8rem; height: 340px; }
+            .cover-moon { width: 250px; height: 250px; right: 8%; }
+            .screens { gap: 20px; }
+            .screen .s-name { font-size: 1.55rem; }
+        }
+        @media (max-width: 960px) {
+            .kan { font-size: 5.4rem; }
+            .v-title { font-size: 2.5rem; }
+            .h2-v { font-size: 1.6rem; }
+            .lede { font-size: 1.15rem; }
+            .quote-v { font-size: 2.1rem; height: 280px; letter-spacing: 0.16em; }
+            .cover-flex { gap: 34px; }
+            .couplet-line { height: 210px; }
+            .cover-seal { display: none; }
+            .screens { flex-wrap: wrap; }
+            .screens .screen { min-height: 250px; margin-top: 0 !important; }
+            .split { grid-template-columns: 1fr; gap: 34px; }
+            .split .side-col { display: none; }
+            .cols2 { column-count: 1; }
+            .v-tl { grid-template-columns: 1fr; gap: 30px; }
+            .v-tl::before { left: 7px; }
+            .v-tl-item { text-align: left; padding-top: 0; padding-left: 38px; }
+            .v-tl-item::before { left: 0; transform: none; top: 6px; }
+            .info-list { grid-template-columns: 1fr; }
+            .corner-tl { display: none; }
+            .hint { display: none; }
+            .cover-meta { position: static; transform: none; margin-top: 40px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .sheen::before, .firefly, .moon::before, .slide.active, .slide.active [class*="r"] { animation: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hills">
+        <svg viewBox="0 0 1440 300" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0,300 L0,214 Q190,120 388,178 Q560,226 744,150 Q928,74 1130,164 Q1290,232 1440,190 L1440,300 Z" fill="rgba(236,231,217,0.045)"/>
+            <path d="M0,300 L0,252 Q240,180 470,226 Q690,268 900,206 Q1110,144 1440,240 L1440,300 Z" fill="rgba(236,231,217,0.028)"/>
+        </svg>
+    </div>
+    <div class="firefly f1"></div>
+    <div class="firefly f2"></div>
+    <div class="firefly f3"></div>
+    <div class="grain"></div>
+    <div class="sheen"></div>
+
+    <main class="stage">
+
+        <!-- 01 封面：中轴楹联构图 -->
+        <section class="slide active" id="s1">
+            <div class="corner corner-tr r1">贰零贰陆 · <span class="gold">秋</span></div>
+            <div class="moon cover-moon r2"></div>
+            <div class="wrap" style="display:flex; flex-direction:column; align-items:center; gap:54px;">
+                <div class="cover-flex">
+                    <div class="couplet r3">山场直供 · 限量三佰罐</div>
+                    <div class="couplet-line r3"></div>
+                    <div class="v-title r2">山月茶事</div>
+                    <div class="couplet-line r4"></div>
+                    <div class="couplet r4">秋季茶单 · 按季寄达</div>
+                    <div class="seal cover-seal r5">山月</div>
+                </div>
+                <div class="r6" style="text-align:center;">
+                    <div class="gold-rule center" style="margin-bottom:18px;"></div>
+                    <div style="display:flex; gap:32px; align-items:baseline; justify-content:center; font-size:1rem; color:var(--ink-faint); letter-spacing:0.2em;">
+                        <span style="color:var(--gold);">贰零贰陆年秋</span>
+                        <span>山月茶事 · 全渠道同步发售</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 02 五条屏目录 -->
+        <section class="slide" id="s2">
+            <div class="corner corner-tr r1">贰零贰陆 · <span class="gold">秋</span></div>
+            <div class="wrap" style="text-align:center;">
+                <div class="kicker r1">目 录</div>
+                <div class="screens">
+                    <div class="screen r2"><span class="s-no">壹</span><span class="s-name">产地</span><span class="s-sub">山场之所生</span></div>
+                    <div class="screen r3"><span class="s-no">贰</span><span class="s-name">制法</span><span class="s-sub">手上的功夫</span></div>
+                    <div class="screen r4"><span class="s-no">叁</span><span class="s-name">茶单</span><span class="s-sub">四款四性情</span></div>
+                    <div class="screen r5"><span class="s-no">肆</span><span class="s-name">茶会</span><span class="s-sub">季节的席</span></div>
+                    <div class="screen r6"><span class="s-no">伍</span><span class="s-name">订阅</span><span class="s-sub">四季寄达</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 03 章回壹 · 产地 -->
+        <section class="slide" id="s3">
+            <div class="corner corner-tr r1">第壹章 · <span class="gold">产地</span></div>
+            <div class="wrap split">
+                <div class="side-col r2" style="display:flex; gap:32px; align-items:flex-start;">
+                    <div class="kan">壹</div>
+                    <div class="h2-v" style="padding-top:12px;">山场之所生</div>
+                </div>
+                <div class="split-main">
+                    <div class="kicker r1">第壹章 · 产地</div>
+                    <p class="lede r3">好茶，先看山场。</p>
+                    <div class="cols2 r4">
+                        <p>茶汤里的层次，一半来自手艺，另一半来自山场本身。<span class="em-gold">六处核心产区</span>全部由山月团队逐年走访选定：看海拔、看云雾、看土壤，也看种茶人是否舍得让茶树慢下来。</p>
+                        <p>今年秋季茶单延续"山场直供"的旧例——每一罐茶都可以追溯到具体的山头与采摘日期。我们不做拼配，也不用它掩盖风土，让每一款茶都只像它自己。</p>
+                    </div>
+                    <div class="r5" style="display:flex; gap:26px; align-items:center;">
+                        <div class="cup" style="width:108px; height:108px; flex-shrink:0;"></div>
+                        <div class="sub">六处核心产区 · 海拔 300 – 900 米 · 云雾带茶园<br>海拔与云雾，决定这一季茶汤的厚度。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 04 金句页：整页竖排 -->
+        <section class="slide" id="s4">
+            <div class="corner corner-tr r1">第壹章 · <span class="gold">茶汤之间</span></div>
+            <div class="moon" style="width:300px; height:300px; left:15%; top:14%; opacity:.92;"></div>
+            <div class="wrap" style="display:flex; justify-content:center;">
+                <blockquote class="quote-v r2"><span>山静，月明，</span><span><span class="em">茶正温。</span></span></blockquote>
+            </div>
+            <div class="r4" style="text-align:center; margin-top:44px;">
+                <div class="gold-rule center" style="margin-bottom:16px;"></div>
+                <div class="sub">—— 主理人 阿岸 · 秋分手记</div>
+            </div>
+        </section>
+
+        <!-- 05 章回贰 · 制法：三片竖排屏风 -->
+        <section class="slide" id="s5">
+            <div class="corner corner-tr r1">第贰章 · <span class="gold">制法</span></div>
+            <div class="wrap">
+                <div class="kan-row r1" style="align-items:center; gap:34px;">
+                    <div class="kan">贰</div>
+                    <div>
+                        <div class="kicker">第贰章 · 制法</div>
+                        <p class="lede" style="margin-top:10px;">三道手上的功夫。</p>
+                    </div>
+                </div>
+                <div class="screens" style="margin-top:36px;">
+                    <div class="screen r3" style="min-height:300px; padding:26px 22px;">
+                        <span class="s-no" style="font-size:1.25rem;">其一</span>
+                        <span class="s-name" style="font-size:1.75rem;">摊青</span>
+                        <span class="s-sub">摊晾六至八小时<br>让香气有处落脚</span>
+                    </div>
+                    <div class="screen r4" style="min-height:300px; padding:26px 22px; margin-top:22px;">
+                        <span class="s-no" style="font-size:1.25rem;">其二</span>
+                        <span class="s-name" style="font-size:1.75rem;">杀青</span>
+                        <span class="s-sub">锅温两百廿度<br>把鲜爽锁进叶脉</span>
+                    </div>
+                    <div class="screen r5" style="min-height:300px; padding:26px 22px;">
+                        <span class="s-no" style="font-size:1.25rem;">其三</span>
+                        <span class="s-name" style="font-size:1.75rem;">提香</span>
+                        <span class="s-sub">炭焙三道降温<br>香气由利转圆</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 06 章回叁 · 产量数据（鎏金横条） -->
+        <section class="slide" id="s6">
+            <div class="corner corner-tr r1">第叁章 · <span class="gold">茶单</span></div>
+            <div class="wrap" style="max-width:920px;">
+                <div class="kan-row r1" style="align-items:center; gap:34px;">
+                    <div class="kan">叁</div>
+                    <div>
+                        <div class="kicker">第叁章 · 茶单</div>
+                        <div style="font-size:2.3rem; font-weight:700; margin-top:8px; letter-spacing:0.04em;">这一季，产量去哪儿了</div>
+                    </div>
+                </div>
+                <div class="bars r3" style="margin-top:28px;">
+                    <div class="bar-row">
+                        <div class="bar-head"><span class="bname">乌龙 · 焙香系</span><span class="bpct">肆成陆</span><span class="bval">2,300 斤</span></div>
+                        <div class="bar-track"><div class="bar-fill" style="width:46%"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-head"><span class="bname">绿茶 · 鲜爽系</span><span class="bpct">叁成贰</span><span class="bval">1,600 斤</span></div>
+                        <div class="bar-track"><div class="bar-fill dim" style="width:32%"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-head"><span class="bname">红茶 · 温润系</span><span class="bpct">贰成贰</span><span class="bval">1,100 斤</span></div>
+                        <div class="bar-track"><div class="bar-fill dim" style="width:22%"></div></div>
+                    </div>
+                </div>
+                <div class="chart-note r4">贰零贰陆秋季总产量伍仟斤 · 鎏金标注本季主力焙香乌龙 · 限量款另计。</div>
+            </div>
+        </section>
+
+        <!-- 07 章回叁 · 茶单表格（细金线） -->
+        <section class="slide" id="s7">
+            <div class="corner corner-tr r1">第叁章 · <span class="gold">茶单</span></div>
+            <div class="wrap">
+                <div class="kicker r1">第叁章 · 茶单</div>
+                <div style="font-size:2.3rem; font-weight:700; margin-bottom:24px; letter-spacing:0.04em;" class="r2">四款茶，四种性情</div>
+                <table class="gtable r3">
+                    <thead>
+                        <tr><th>茶名</th><th>产区</th><th>工艺</th><th>上市批次</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>明前狮峰</td><td>杭州 · 狮峰山</td><td>绿茶 · 全手工炒制</td><td class="num dur">玖月首批</td></tr>
+                        <tr><td>桂花龙井</td><td>杭州 · 满觉陇</td><td>窨花 · 三窨一提</td><td class="num dur">拾月中</td></tr>
+                        <tr><td>武夷肉桂</td><td>武夷山 · 正岩</td><td>乌龙 · 炭焙三道</td><td class="num dur">拾月末</td></tr>
+                        <tr><td>日月潭红</td><td>台湾 · 鱼池乡</td><td>红茶 · 全芽头</td><td class="num dur">拾壹月</td></tr>
+                    </tbody>
+                </table>
+                <div class="chart-note r4">每款均附山场溯源卡与冲泡建议；限量款在订阅渠道优先发售。</div>
+            </div>
+        </section>
+
+        <!-- 08 章回肆 · 茶会：竖向卷轴时间线 -->
+        <section class="slide" id="s8">
+            <div class="corner corner-tr r1">第肆章 · <span class="gold">茶会</span></div>
+            <div class="wrap">
+                <div class="kan-row r1" style="align-items:center; gap:34px;">
+                    <div class="kan">肆</div>
+                    <div>
+                        <div class="kicker">第肆章 · 茶会</div>
+                        <div style="font-size:2.3rem; font-weight:700; margin-top:8px; letter-spacing:0.04em;">把茶席摆进季节里</div>
+                    </div>
+                </div>
+                <div class="v-tl" style="margin-top:46px;">
+                    <div class="v-tl-item r3">
+                        <div class="date">贰零贰陆 · 玖月</div>
+                        <div class="name">中秋 · 月下茶会</div>
+                        <div class="desc">庭院夜席，只泡当年秋茶；配一块现打的桂花糕。</div>
+                    </div>
+                    <div class="v-tl-item r4">
+                        <div class="date">贰零贰陆 · 拾月</div>
+                        <div class="name">山场溯源行</div>
+                        <div class="desc">两天一夜，带订户走进狮峰与正岩，看茶园也看制茶的手。</div>
+                    </div>
+                    <div class="v-tl-item r5">
+                        <div class="date">贰零贰陆 · 拾贰月</div>
+                        <div class="name">围炉 · 冬至夜话</div>
+                        <div class="desc">炭炉煮老茶，一炉烤物；一年茶事，在这一晚收梢。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 09 章回伍 · 订阅 -->
+        <section class="slide" id="s9">
+            <div class="corner corner-tr r1">第伍章 · <span class="gold">订阅</span></div>
+            <div class="wrap split">
+                <div class="side-col r2" style="display:flex; gap:30px; align-items:flex-start;">
+                    <div class="kan">伍</div>
+                    <div class="quote-v" style="height:auto; font-size:2.05rem; letter-spacing:0.2em; line-height:1.9; padding-top:10px;">
+                        <span>把一年四季，</span><span>寄到你手上。</span>
+                    </div>
+                </div>
+                <div class="split-main">
+                    <div class="kicker r1">第伍章 · 订阅</div>
+                    <p class="lede r3">四季订阅，每季一匣：当季两款茶、手写茶签与山场溯源卡。</p>
+                    <div class="info-list r4">
+                        <div class="info-item"><div class="lab">订阅方式</div><div class="val">sanyue-tea.cn · 四季 / 全年两档</div></div>
+                        <div class="info-item"><div class="lab">发货节奏</div><div class="val">每季首月十日前 · 冷链直达</div></div>
+                        <div class="info-item"><div class="lab">会员权益</div><div class="val">茶会优先席位 · 限量款预留</div></div>
+                        <div class="info-item"><div class="lab">线下茶席</div><div class="val">山月茶事 · 杭州南山路店</div></div>
+                    </div>
+                    <div class="r5" style="display:flex; align-items:center; gap:26px;">
+                        <div class="seal">山月</div>
+                        <div class="sub">秋季首匣 · 玖月拾日前后寄出<br>订阅用户抢先获得中秋茶会席位。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10 结尾：竖排收束 -->
+        <section class="slide" id="s10">
+            <div class="corner corner-tr r1">山月茶事 · <span class="gold">贰零贰陆秋</span></div>
+            <div class="moon" style="width:270px; height:270px; right:19%; top:13%;"></div>
+            <div class="wrap" style="display:flex; flex-direction:column; align-items:center; gap:30px; position:relative;">
+                <div class="v-title r2" style="font-size:2.8rem;">山月常在，茶事不停。</div>
+                <div class="r4" style="text-align:center;">
+                    <div class="gold-rule center" style="margin-bottom:14px;"></div>
+                    <div class="sub">秋季茶单玖月上市 · sanyue-tea.cn · 山月茶事 · 杭州南山路店</div>
+                </div>
+                <div class="seal r5" style="position:absolute; right:-46px; bottom:-8px;">山月</div>
+            </div>
+        </section>
+
+    </main>
+
+    <div class="controls">
+        <button id="prevBtn" aria-label="上一页">←</button>
+        <span class="counter" id="counter">1 / 10</span>
+        <button id="nextBtn" aria-label="下一页">→</button>
+    </div>
+    <div class="hint">← → 翻页 · F 全屏</div>
+    <div class="progress-bar" id="progress"></div>
+
+    <script>
+        (function () {
+            var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+            var total = slides.length;
+            var cur = 0;
+            var counter = document.getElementById('counter');
+            var progress = document.getElementById('progress');
+
+            function render() {
+                slides.forEach(function (s, i) { s.classList.toggle('active', i === cur); });
+                counter.textContent = (cur + 1) + ' / ' + total;
+                progress.style.width = ((cur + 1) / total * 100) + '%';
+                try { history.replaceState(null, '', '#' + (cur + 1)); } catch (e) {}
+            }
+
+            function go(n) {
+                var next = Math.max(0, Math.min(total - 1, n));
+                cur = next;
+                render();
+            }
+
+            var locked = false;
+            function step(delta) {
+                if (locked) return;
+                locked = true;
+                go(cur + delta);
+                setTimeout(function () { locked = false; }, 750);
+            }
+
+            document.addEventListener('keydown', function (e) {
+                if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].indexOf(e.key) > -1) { e.preventDefault(); step(1); }
+                else if (['ArrowLeft', 'ArrowUp', 'PageUp'].indexOf(e.key) > -1) { e.preventDefault(); step(-1); }
+                else if (e.key === 'Home') { e.preventDefault(); go(0); }
+                else if (e.key === 'End') { e.preventDefault(); go(total - 1); }
+                else if (e.key === 'f' || e.key === 'F') {
+                    if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(function () {}); }
+                    else { document.exitFullscreen(); }
+                }
+            });
+
+            window.addEventListener('wheel', function (e) {
+                if (Math.abs(e.deltaY) < 24) return;
+                step(e.deltaY > 0 ? 1 : -1);
+            }, { passive: true });
+
+            var tx = 0, ty = 0;
+            window.addEventListener('touchstart', function (e) {
+                tx = e.changedTouches[0].clientX;
+                ty = e.changedTouches[0].clientY;
+            }, { passive: true });
+            window.addEventListener('touchend', function (e) {
+                var dx = e.changedTouches[0].clientX - tx;
+                var dy = e.changedTouches[0].clientY - ty;
+                if (Math.max(Math.abs(dx), Math.abs(dy)) < 60) return;
+                step(Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 1 : -1) : (dy < 0 ? 1 : -1));
+            }, { passive: true });
+
+            document.getElementById('prevBtn').addEventListener('click', function () { step(-1); });
+            document.getElementById('nextBtn').addEventListener('click', function () { step(1); });
+
+            function fromHash() {
+                var n = parseInt(location.hash.replace('#', ''), 10);
+                if (!isNaN(n) && n >= 1 && n <= total) { cur = n - 1; render(); }
+            }
+            window.addEventListener('hashchange', fromHash);
+            fromHash();
+            render();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>近处的生活 · 城市可持续生活分享 — 莫兰迪矿物模板</title>
+    <style>
+        :root {
+            /* 莫兰迪/矿物配色方案 */
+            --bg-base: #f4f1ea;
+            --accent-soft: #a8b5a2; /* 晨雾绿 */
+            --accent-deep: #77836f; /* 深晨雾绿（可读性用） */
+            --accent-warm: #d9c5b2; /* 流沙金 */
+            --text-main: #3a3a3a;
+            --text-muted: #707070;
+            --glass-white: rgba(255, 255, 255, 0.35);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            color: var(--text-main);
+            background-color: var(--bg-base);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* ==================== 苹果级液态背景 (非线性渐变) ==================== */
+        .liquid-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            filter: blur(80px);
+            opacity: 0.6;
+        }
+        .blob { position: absolute; border-radius: 50%; animation: move 25s infinite alternate ease-in-out; }
+        .blob-1 { width: 600px; height: 600px; background: #e2e8ce; top: -10%; left: -10%; }
+        .blob-2 { width: 500px; height: 500px; background: #d9c5b2; bottom: -5%; right: 10%; animation-delay: -5s; }
+        .blob-3 { width: 400px; height: 400px; background: #b9c6bd; top: 40%; left: 30%; animation-delay: -10s; }
+        @keyframes move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(100px, 50px) scale(1.1); }
+        }
+
+        /* ==================== 演示主容器 ==================== */
+        .presentation-frame {
+            position: relative;
+            width: 90vw;
+            height: 86vh;
+            max-width: 1200px;
+            background: var(--glass-white);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 24px;
+            box-shadow: 0 24px 60px rgba(58, 58, 58, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .slides-container { flex: 1; position: relative; }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: clamp(2.2rem, 5.5vh, 3.6rem) clamp(2.4rem, 4.5vw, 4rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(24px);
+            transition: opacity .7s ease, transform .7s ease, visibility 0s linear .7s;
+        }
+        .slide.active {
+            opacity: 1; visibility: visible; transform: none;
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+        /* ==================== 排版 ==================== */
+        .kicker {
+            font-size: 1rem;
+            letter-spacing: .3em;
+            color: var(--accent-deep);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 4.2rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.2;
+            letter-spacing: 2px;
+        }
+        h2 {
+            font-size: 2.8rem;
+            color: var(--text-main);
+            border-left: 6px solid var(--accent-soft);
+            padding-left: 20px;
+            line-height: 1.3;
+            margin-bottom: 1.4rem;
+        }
+        p, .lede {
+            font-size: 1.35rem;
+            line-height: 1.85;
+            color: #4d4d4d;
+            max-width: 880px;
+        }
+
+        /* 圆点列表 */
+        .bullet { list-style: none; margin-top: .4rem; }
+        .bullet li {
+            position: relative;
+            padding-left: 1.7rem;
+            margin-bottom: 1.05rem;
+            font-size: 1.35rem;
+            line-height: 1.75;
+            color: #4d4d4d;
+        }
+        .bullet li::before {
+            content: "";
+            position: absolute;
+            left: .15rem; top: .62em;
+            width: 11px; height: 11px;
+            border-radius: 50%;
+            background: var(--accent-soft);
+        }
+        .bullet li b { color: var(--text-main); }
+
+        /* 矿物卡片 */
+        .card {
+            background: rgba(255, 255, 255, 0.42);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 18px;
+            padding: 1.4rem 1.6rem;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+        .card-name { font-size: 1.32rem; font-weight: 700; color: var(--text-main); margin-bottom: .5rem; }
+        .card-name::after { content: ""; display: block; width: 34px; height: 3px; background: var(--accent-warm); border-radius: 2px; margin-top: .45rem; }
+        .card-text { font-size: 1.12rem; line-height: 1.7; color: #5c5c5c; }
+
+        .stat-num {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-deep);
+            line-height: 1.2;
+            font-variant-numeric: tabular-nums;
+        }
+        .stat-label { margin-top: .5rem; font-size: 1.18rem; color: var(--text-main); font-weight: 600; }
+        .stat-note { margin-top: .25rem; font-size: .98rem; color: var(--text-muted); }
+
+        .note {
+            background: rgba(217, 197, 178, 0.22);
+            border-left: 4px solid var(--accent-warm);
+            border-radius: 0 14px 14px 0;
+            padding: .95rem 1.3rem;
+            font-size: 1.15rem;
+            line-height: 1.75;
+            color: #5c5c5c;
+            margin-top: 1.4rem;
+            max-width: 920px;
+        }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: .85rem 1rem;
+            text-align: left;
+            font-size: 1.16rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(58, 58, 58, 0.12);
+        }
+        .table th { color: var(--text-main); font-weight: 700; border-bottom: 2px solid var(--accent-soft); }
+        .table td:first-child { font-weight: 600; color: var(--text-main); }
+        .table td { color: #4d4d4d; }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; position: relative; margin-top: .5rem; }
+        .timeline::before { content: ""; position: absolute; top: 9px; left: 3%; right: 3%; height: 2px; background: var(--accent-soft); opacity: .5; }
+        .tl-step { position: relative; padding-top: 2.1rem; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 4px solid var(--accent-soft); }
+        .tl-phase { font-size: .92rem; color: var(--accent-deep); letter-spacing: .14em; margin-bottom: .25rem; font-weight: 600; }
+        .tl-name { font-size: 1.3rem; font-weight: 700; margin-bottom: .45rem; color: var(--text-main); }
+        .tl-desc { font-size: 1.08rem; line-height: 1.7; color: #5c5c5c; }
+
+        /* 目录 */
+        .toc { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-top: .3rem; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 1rem;
+            background: rgba(255, 255, 255, 0.42);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 16px;
+            padding: 1rem 1.4rem;
+        }
+        .toc .no { font-size: 1.35rem; font-weight: 700; color: var(--accent-deep); font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.26rem; font-weight: 700; color: var(--text-main); }
+        .toc .d { margin-left: auto; font-size: .98rem; color: var(--text-muted); }
+
+        /* 封面 / 结尾 */
+        .pill {
+            display: inline-block;
+            padding: .45rem 1.3rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            font-size: .9rem;
+            letter-spacing: .24em;
+            color: var(--accent-deep);
+            align-self: flex-start;
+        }
+        .cover-foot {
+            margin-top: 2.2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(58,58,58,.16);
+            display: flex;
+            gap: 2.6rem;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+        .quote {
+            font-size: 2.6rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            max-width: 21em;
+        }
+        .quote::before { content: "「"; color: var(--accent-soft); }
+        .quote::after { content: "」"; color: var(--accent-soft); }
+
+        /* ==================== 底部控制 ==================== */
+        .frame-footer {
+            padding: 1rem 2.6rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .btn-nav {
+            background: transparent;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: .6rem 1.8rem;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: .98rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-main);
+        }
+        .btn-nav:hover {
+            background: rgba(255, 255, 255, 0.5);
+            border-color: var(--accent-soft);
+        }
+        .progress-dots { display: flex; gap: 10px; }
+        .dot {
+            width: 8px; height: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .dot.active { width: 24px; background: var(--accent-soft); border-radius: 4px; }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 2.6rem; } h2 { font-size: 2rem; } p, .lede, li { font-size: 1.15rem; }
+            .grid-2, .grid-3, .timeline, .toc { grid-template-columns: 1fr; gap: .9rem; }
+            .presentation-frame { width: 94vw; height: 92vh; }
+            .toc .d { display: none; }
+            .frame-footer { padding: .9rem 1.4rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .blob { animation: none; }
+            .slide { transition: opacity .3s ease; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="liquid-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="presentation-frame">
+        <div class="slides-container">
+
+            <!-- 1 封面 -->
+            <section class="slide active">
+                <span class="pill">生活实验 · 第一季</span>
+                <h1 style="margin-top: 1.4rem;">近处的生活</h1>
+                <p style="margin-top: 1.1rem;">城市里的可持续生活实践</p>
+                <p style="margin-top: .4rem; color: var(--text-muted);">不搬家、不苦行，把日子过认真的一点小实验。</p>
+                <div class="cover-foot">
+                    <span>苏禾</span>
+                    <span style="letter-spacing: .2em;">PRESENTATION · 2026</span>
+                </div>
+            </section>
+
+            <!-- 2 目录 -->
+            <section class="slide">
+                <div class="kicker">AGENDA</div>
+                <h2>今天的四个部分</h2>
+                <ul class="toc">
+                    <li><span class="no">01</span><span class="t">为什么是「附近」</span><span class="d">生活半径的重新丈量</span></li>
+                    <li><span class="no">02</span><span class="t">四个起步习惯</span><span class="d">从自带杯到堆肥角</span></li>
+                    <li><span class="no">03</span><span class="t">一年的账单</span><span class="d">数据不会说谎</span></li>
+                    <li><span class="no">04</span><span class="t">社区实验与下一步</span><span class="d">把经验交还邻居</span></li>
+                </ul>
+            </section>
+
+            <!-- 3 为什么是附近 -->
+            <section class="slide">
+                <div class="kicker">01 · 附近</div>
+                <h2>为什么是「附近」</h2>
+                <ul class="bullet">
+                    <li><span>快递与外卖，把生活变成了纯消耗。</span></li>
+                    <li><span>「可持续」总被理解成昂贵与麻烦。</span></li>
+                    <li><span>真正可行的路径，藏在步行 15 分钟内。</span></li>
+                    <li><span>小区，是成本最低的试验场。</span></li>
+                </ul>
+                <div class="note">这次分享的所有数据，来自我们一栋楼 24 户人家的真实记录。</div>
+            </section>
+
+            <!-- 4 四个起步习惯 -->
+            <section class="slide">
+                <div class="kicker">02 · 习惯</div>
+                <h2>四个起步习惯</h2>
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-name">自带杯</div>
+                        <p class="card-text">咖啡自带杯立减，一年约省下 240 只一次性杯。</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-name">二手流转</div>
+                        <p class="card-text">小区群置换，全年入手 11 件、送出 17 件。</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-name">当季食谱</div>
+                        <p class="card-text">加入周边农场 CSA，每周一箱定向配送。</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-name">堆肥角</div>
+                        <p class="card-text">阳台两桶式堆肥，厨余减掉近一半。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5 一年的账单 -->
+            <section class="slide">
+                <div class="kicker">03 · 账单</div>
+                <h2>一年之后，账单怎么说</h2>
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="stat-num">-46%</div>
+                        <div class="stat-label">厨余垃圾</div>
+                        <div class="stat-note">两桶堆肥消化了大半</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-num">-380 只</div>
+                        <div class="stat-label">塑料袋消耗</div>
+                        <div class="stat-note">布袋与容器成了习惯</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-num">-8%</div>
+                        <div class="stat-label">生活开支</div>
+                        <div class="stat-note">按需购买，不再囤货</div>
+                    </div>
+                </div>
+                <p style="margin-top: 1.4rem; margin-bottom: 0;">意外收获是时间——不再囤积之后，家务每周少了近一小时。</p>
+            </section>
+
+            <!-- 6 两种消费的对比 -->
+            <section class="slide">
+                <div class="kicker">03 · 对比</div>
+                <h2>两种消费方式的对比</h2>
+                <table class="table">
+                    <thead>
+                        <tr><th>维度</th><th>快递式消费</th><th>附近式消费</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>采购半径</td><td>次日达，800 公里外</td><td>步行 1.5 公里内</td></tr>
+                        <tr><td>包装</td><td>三层快递箱</td><td>散装自带容器</td></tr>
+                        <tr><td>时效</td><td>随时想要</td><td>按季等待</td></tr>
+                        <tr><td>心理状态</td><td>囤积焦虑</td><td>知足可见</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 7 社区实验 -->
+            <section class="slide">
+                <div class="kicker">04 · 社区</div>
+                <h2>把实验搬出阳台</h2>
+                <div class="timeline">
+                    <div class="tl-step">
+                        <div class="tl-phase">第一步</div>
+                        <div class="tl-name">楼栋共享角</div>
+                        <div class="tl-desc">工具与图书登记制借用，目前 43 件在册。</div>
+                    </div>
+                    <div class="tl-step">
+                        <div class="tl-phase">第二步</div>
+                        <div class="tl-name">周末交换市集</div>
+                        <div class="tl-desc">每月一次，以物易物，摊位自由认领。</div>
+                    </div>
+                    <div class="tl-step">
+                        <div class="tl-phase">第三步</div>
+                        <div class="tl-name">旧物改造课</div>
+                        <div class="tl-desc">木工与缝纫，孩子大人一起上。</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8 深入：阳台堆肥 -->
+            <section class="slide">
+                <div class="kicker">04 · 深入</div>
+                <h2>阳台堆肥怎么做</h2>
+                <div class="grid-3">
+                    <div class="card">
+                        <div class="card-name">装备</div>
+                        <p class="card-text">一只带盖桶加一袋干叶，成本不到 30 元。</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-name">节奏</div>
+                        <p class="card-text">厨余切碎入桶、干叶覆盖分层，每两周翻一次。</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-name">成果</div>
+                        <p class="card-text">约一个月成土，酸性果皮少量多次。</p>
+                    </div>
+                </div>
+                <div class="note">第一桶土出坑那天，楼栋群里的邻居都来围观。</div>
+            </section>
+
+            <!-- 9 下一步 -->
+            <section class="slide">
+                <div class="kicker">04 · 下一步</div>
+                <h2>第二季，往哪里走</h2>
+                <ul class="bullet">
+                    <li><span>与街道办共建 3 个楼栋共享角。</span></li>
+                    <li><span>把食谱与账单整理成开源手册。</span></li>
+                    <li><span>邀请 20 户邻居加入第二季实验。</span></li>
+                    <li><span>目标：小区湿垃圾再降三成。</span></li>
+                </ul>
+                <div class="note">第二季从 9 月开始，现在正是加入的时候。</div>
+            </section>
+
+            <!-- 10 结尾 -->
+            <section class="slide">
+                <p class="quote">可持续不是苦行，是把日子过得更认真。</p>
+                <div class="cover-foot">
+                    <span>联系：suhe@life.mail</span>
+                    <span>小红书 @苏禾的附近</span>
+                </div>
+            </section>
+
+        </div>
+
+        <div class="frame-footer">
+            <button class="btn-nav" data-action="prev">上一页</button>
+            <div class="progress-dots" id="progressDots"></div>
+            <button class="btn-nav" data-action="next">下一页</button>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+        const dotsBox = document.getElementById('progressDots');
+
+        /* 进度点 */
+        const dots = [];
+        if (dotsBox) {
+            for (let i = 0; i < total; i++) {
+                const d = document.createElement('span');
+                d.className = 'dot';
+                d.addEventListener('click', () => goTo(i));
+                dotsBox.appendChild(d);
+                dots.push(d);
+            }
+        }
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            dots.forEach((d, i) => d.classList.toggle('active', i === current));
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

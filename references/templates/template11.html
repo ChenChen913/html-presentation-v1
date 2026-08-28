@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>春汐 · 婚礼策划提案 — 樱粉暮蓝玻璃模板</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --primary-text: #4c2f3e;
+            --accent-color: #b0567a;
+            --bg-gradient: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-text);
+        }
+
+        /* 缓缓流动的玫瑰光晕 */
+        body::before, body::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(75px);
+            z-index: -1;
+            opacity: .55;
+        }
+        body::before {
+            width: 46vw; height: 46vw;
+            left: -14vw; top: -12vh;
+            background: rgba(255, 214, 236, 0.95);
+            animation: glowA 28s ease-in-out infinite alternate;
+        }
+        body::after {
+            width: 42vw; height: 42vw;
+            right: -12vw; bottom: -16vh;
+            background: rgba(196, 214, 250, 0.95);
+            animation: glowB 34s ease-in-out infinite alternate;
+        }
+        @keyframes glowA { to { transform: translate(8vw, 6vh) scale(1.1); } }
+        @keyframes glowB { to { transform: translate(-9vw, -5vh) scale(1.12); } }
+
+        /* 幻灯片容器 */
+        .presentation-container {
+            width: 85vw;
+            height: 82vh;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%; height: 100%;
+            padding: clamp(40px, 6vh, 60px) clamp(44px, 5vw, 64px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px 0 rgba(140, 80, 110, 0.15);
+        }
+        .slide.active { display: flex; animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 标题排版 */
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #6d2c46, #b0567a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 28px;
+            color: #5a3247;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 20px;
+            line-height: 1.3;
+        }
+        .kicker {
+            font-size: 1rem;
+            letter-spacing: .3em;
+            color: #9c4668;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            max-width: 860px;
+            margin-bottom: 20px;
+            color: #664454;
+        }
+
+        /* 列表排版 */
+        ul { list-style: none; margin-top: 6px; }
+        li {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.7;
+            color: #6d4a5a;
+        }
+        li::before {
+            content: "•";
+            color: var(--accent-color);
+            font-size: 2rem;
+            line-height: 1.1;
+            margin-right: 15px;
+        }
+        li b { color: var(--primary-text); }
+
+        /* 玻璃小卡与网格 */
+        .card {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 20px;
+            padding: 24px 28px;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; width: 100%; }
+
+        .stat-num {
+            font-size: 2.9rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #6d2c46, #b0567a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .stat-label { margin-top: 8px; font-size: 1.2rem; color: var(--primary-text); font-weight: 600; }
+        .stat-note { margin-top: 4px; font-size: 1rem; color: #8a6a78; }
+
+        .note {
+            background: rgba(176, 86, 122, 0.12);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 0 14px 14px 0;
+            padding: 14px 20px;
+            font-size: 1.15rem;
+            line-height: 1.75;
+            color: #6d4a5a;
+            max-width: 920px;
+        }
+
+        /* 色卡 */
+        .swatch { height: 64px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.6); margin-bottom: 12px; }
+        .swatch-name { font-size: 1.15rem; font-weight: 700; color: var(--primary-text); }
+        .swatch-note { font-size: .98rem; color: #8a6a78; margin-top: 2px; }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: 13px 16px;
+            text-align: left;
+            font-size: 1.18rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(76, 47, 62, 0.12);
+        }
+        .table th { color: #4c2f3e; font-weight: 700; border-bottom: 2px solid var(--accent-color); }
+        .table td:first-child { font-weight: 600; color: var(--primary-text); }
+        .table td { color: #6d4a5a; }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; width: 100%; position: relative; margin-top: 8px; }
+        .timeline::before { content: ""; position: absolute; top: 10px; left: 3%; right: 3%; height: 2px; background: linear-gradient(90deg, #e8a7c5, #b0567a); opacity: .5; }
+        .tl-step { position: relative; padding-top: 34px; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 4px solid var(--accent-color); }
+        .tl-phase { font-size: .95rem; color: #9c4668; letter-spacing: .14em; margin-bottom: 4px; font-weight: 600; }
+        .tl-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-text); }
+        .tl-desc { font-size: 1.1rem; line-height: 1.7; color: #7d5c6b; }
+
+        /* 目录 */
+        .toc { list-style: none; width: 100%; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 18px;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 18px;
+            padding: 16px 24px;
+            margin-bottom: 14px;
+        }
+        .toc li::before { content: none; }
+        .toc .no { font-size: 1.5rem; font-weight: 700; color: #9c4668; font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.35rem; font-weight: 700; color: var(--primary-text); }
+        .toc .d { margin-left: auto; font-size: 1.05rem; color: #8a6a78; }
+
+        /* 封面 / 结尾专属 */
+        .pill {
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.42);
+            border: 1px solid var(--glass-border);
+            font-size: .95rem;
+            letter-spacing: .24em;
+            color: #9c4668;
+            margin-bottom: 26px;
+            align-self: flex-start;
+        }
+        .cover-foot {
+            width: 100%;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(76,47,62,.16);
+            display: flex;
+            gap: 36px;
+            font-size: 1.05rem;
+            color: #8a6a78;
+        }
+
+        /* 控制按钮 */
+        .controls {
+            position: fixed;
+            bottom: 28px;
+            right: 44px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10;
+        }
+        .controls button {
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--primary-text);
+            transition: all 0.3s;
+        }
+        .controls button:hover {
+            background: rgba(255, 255, 255, 0.55);
+            transform: translateY(-2px);
+        }
+        .counter { font-size: 1rem; color: #6d505e; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+
+        .hint {
+            position: fixed;
+            bottom: 34px;
+            left: 44px;
+            font-size: .9rem;
+            color: rgba(76, 47, 62, 0.55);
+            letter-spacing: .1em;
+            z-index: 10;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 5px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+            z-index: 20;
+        }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } p, li { font-size: 1.15rem; }
+            .grid-3, .timeline { grid-template-columns: 1fr; gap: 14px; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .presentation-container { width: 92vw; height: 88vh; }
+            .toc .d { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body::before, body::after { animation: none; }
+            .slide.active { animation: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressFill"></div>
+
+    <div class="presentation-container">
+
+        <!-- 1 封面 -->
+        <section class="slide active">
+            <div class="pill">WEDDING PROPOSAL · 2026</div>
+            <h1>春汐</h1>
+            <p>一场关于潮汐与晚风的婚礼提案 —— 致阿澈与小满，愿你们的故事自此有了归处。</p>
+            <p style="font-size: 1.05rem; color: #8a6a78; margin-bottom: 0;">春汐婚礼策划 · 顾晚&nbsp;&nbsp;&nbsp;&nbsp;2026 年 4 月</p>
+        </section>
+
+        <!-- 2 目录 -->
+        <section class="slide">
+            <h2>这份提案的四个章节</h2>
+            <ul class="toc">
+                <li><span class="no">01</span><span class="t">故事</span><span class="d">他们在海边相遇</span></li>
+                <li><span class="no">02</span><span class="t">主题</span><span class="d">潮汐与晚风</span></li>
+                <li><span class="no">03</span><span class="t">细节</span><span class="d">色彩、流程与场地</span></li>
+                <li><span class="no">04</span><span class="t">日程</span><span class="d">筹备节奏与预算</span></li>
+            </ul>
+        </section>
+
+        <!-- 3 故事 -->
+        <section class="slide">
+            <div class="kicker">01 · 故事</div>
+            <h2>他们在海边相遇</h2>
+            <ul>
+                <li><span><b>2019 年夏：</b>大学毕业旅行，两个陌生人在同一个浪头摔了同一个跟头。</span></li>
+                <li><span><b>2021 年春：</b>第一次一起看日出，阿澈说「以后每次都陪你」。</span></li>
+                <li><span><b>2025 年冬：</b>还是那片海，阿澈把戒指藏在捡了一下午的贝壳里。</span></li>
+                <li><span><b>2026 年秋：</b>他们决定，把婚礼办回故事开始的地方。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">小满的原话：「我不要盛大的排场，我要一转身就能看见海的那种安心。」</div>
+        </section>
+
+        <!-- 4 主题 -->
+        <section class="slide">
+            <div class="kicker">02 · 主题</div>
+            <h2>潮汐与晚风</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="kicker" style="margin-bottom: 8px;">潮汐 · 仪式区</div>
+                    <p style="margin-bottom: 0; max-width: none;">面朝大海的草坪仪式：白纱幔随海风起伏，拱门以退潮后的贝壳与流木搭成，誓言在涨潮前说出。</p>
+                </div>
+                <div class="card">
+                    <div class="kicker" style="margin-bottom: 8px;">晚风 · 晚宴区</div>
+                    <p style="margin-bottom: 0; max-width: none;">日落后的露天长桌宴：暖灯串缠绕原木长桌，菜单印着两人七年的故事线，每道菜对应一座一起去过的城。</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 22px;">整场设计只有一条主线：让海做背景，让风做嘉宾，让时间做见证。</div>
+        </section>
+
+        <!-- 5 色彩与花材 -->
+        <section class="slide">
+            <div class="kicker">03 · 细节</div>
+            <h2>色彩与花材</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="swatch" style="background: linear-gradient(135deg, #f8c8d8, #f4a7c3);"></div>
+                    <div class="swatch-name">霞粉</div>
+                    <div class="swatch-note">主色 · 洋牡丹 + 荔枝玫瑰</div>
+                </div>
+                <div class="card">
+                    <div class="swatch" style="background: linear-gradient(135deg, #c7d8f5, #a6c1ee);"></div>
+                    <div class="swatch-name">雾蓝</div>
+                    <div class="swatch-note">辅色 · 绣球 + 娜丽塔尤加利</div>
+                </div>
+                <div class="card">
+                    <div class="swatch" style="background: linear-gradient(135deg, #fdf3e0, #f3e2bd);"></div>
+                    <div class="swatch-name">月白</div>
+                    <div class="swatch-note">留白 · 白掌 + 满天星点缀</div>
+                </div>
+            </div>
+            <p style="margin-top: 22px; margin-bottom: 0;">花材全部选用当季本地供给，退潮滩涂边的芒萁与流木将作为装置的骨架。</p>
+        </section>
+
+        <!-- 6 全天流程 -->
+        <section class="slide">
+            <div class="kicker">03 · 细节</div>
+            <h2>婚礼当天的流程</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>时间</th><th>环节</th><th>地点</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>15:00</td><td>宾客入场 · 贝壳签到</td><td>草坪迎宾区</td></tr>
+                    <tr><td>16:00</td><td>仪式开始 · 涨潮前的誓言</td><td>海景仪式区</td></tr>
+                    <tr><td>17:00</td><td>落日合影 · 香槟塔</td><td>观景平台</td></tr>
+                    <tr><td>17:40</td><td>晚宴开席 · 故事菜单</td><td>长桌晚宴区</td></tr>
+                    <tr><td>20:00</td><td>篝火 · 第一支舞</td><td>沙滩中心</td></tr>
+                    <tr><td>21:00</td><td>烟花送客 · 伴手礼</td><td>出口长廊</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 7 场地四区 -->
+        <section class="slide">
+            <div class="kicker">03 · 细节</div>
+            <h2>场地的四个区域</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">迎宾区</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">栈道两侧挂渔灯与纱幔，签到台是一只老渔船改的长桌，贝壳里写着每位宾客的名字。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">仪式区</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">退潮线上的流木拱门，六十把白椅围成浅浅的弧，像被海浪轻轻推开的形状。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">晚宴区</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">四条 12 米原木长桌，桌旗是渐变的霞粉到雾蓝，灯串高度齐眉，不挡海景。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">拍照角</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">一面挂满七年来旅行照片的旧木框墙，角落立着那块 2019 年他们坐过的礁石。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8 筹备时间轴 -->
+        <section class="slide">
+            <div class="kicker">04 · 日程</div>
+            <h2>筹备时间轴</h2>
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-phase">T-30 天</div>
+                    <div class="tl-name">方案定稿</div>
+                    <div class="tl-desc">确认场地、花材与菜单试吃，请柬与伴手礼下厂制作。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">T-7 天</div>
+                    <div class="tl-name">进场布置</div>
+                    <div class="tl-desc">流木拱门与灯串进场搭建，天气预案演练，音响灯光联调。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">T-1 天</div>
+                    <div class="tl-name">全流程彩排</div>
+                    <div class="tl-desc">新人、司仪、乐队全流程走位，潮汐时间最终核对。</div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 24px;">特别说明：仪式时刻以当天实际潮汐表为准，宁可早到十分，不可错过一浪。</div>
+        </section>
+
+        <!-- 9 预算 -->
+        <section class="slide">
+            <div class="kicker">04 · 日程</div>
+            <h2>预算怎么分配</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>项目</th><th>占比</th><th>包含内容</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>场地与布置</td><td>35%</td><td>草坪租赁、拱门装置、四区搭建与灯光</td></tr>
+                    <tr><td>餐饮</td><td>30%</td><td>故事菜单晚宴、酒水与伴手茶点</td></tr>
+                    <tr><td>花艺</td><td>15%</td><td>主仪式区、长桌花艺与全场景点缀</td></tr>
+                    <tr><td>影像</td><td>12%</td><td>双机位摄影、跟拍录像与航拍</td></tr>
+                    <tr><td>机动</td><td>8%</td><td>天气预案、应急物资与临时增项</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 10 结尾 -->
+        <section class="slide">
+            <div class="kicker">THANK YOU</div>
+            <h1>愿潮汐如约，晚风常在</h1>
+            <p>期待十月的风把这份提案吹成现实，也期待与你们在海边见面。</p>
+            <div class="cover-foot">
+                <span>策划：春汐婚礼 · 顾晚</span>
+                <span>联络：hello@chunxi.wed</span>
+                <span>场勘预约：随时可约</span>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="controls">
+        <button data-action="prev">上一页</button>
+        <span class="counter" id="pageCounter">1 / 10</span>
+        <button data-action="next">下一页</button>
+    </div>
+    <div class="hint">← → 翻页 · F 全屏</div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

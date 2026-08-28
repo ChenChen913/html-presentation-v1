@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>步履 · 城市漫步路线企划 — 薄荷玻璃模板</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --primary-text: #1f3d33;
+            --accent-color: #0f9494;
+            --bg-gradient: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-text);
+        }
+
+        /* 漂浮的柔光气泡 */
+        body::before, body::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(75px);
+            z-index: -1;
+            opacity: .6;
+        }
+        body::before {
+            width: 44vw; height: 44vw;
+            right: -12vw; top: -16vh;
+            background: rgba(213, 252, 219, 0.9);
+            animation: floatA 32s ease-in-out infinite alternate;
+        }
+        body::after {
+            width: 38vw; height: 38vw;
+            left: -10vw; bottom: -14vh;
+            background: rgba(186, 230, 253, 0.9);
+            animation: floatB 38s ease-in-out infinite alternate;
+        }
+        @keyframes floatA { to { transform: translate(-7vw, 8vh) scale(1.1); } }
+        @keyframes floatB { to { transform: translate(9vw, -7vh) scale(1.14); } }
+
+        /* 幻灯片容器 */
+        .presentation-container {
+            width: 85vw;
+            height: 82vh;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%; height: 100%;
+            padding: clamp(40px, 6vh, 60px) clamp(44px, 5vw, 64px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 100, 80, 0.15);
+        }
+        .slide.active { display: flex; animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 标题排版 */
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #17555c, #0f9494);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 28px;
+            color: #234c40;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 20px;
+            line-height: 1.3;
+        }
+        .kicker {
+            font-size: 1rem;
+            letter-spacing: .3em;
+            color: #0c7d7d;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            max-width: 860px;
+            margin-bottom: 20px;
+            color: #375448;
+        }
+
+        /* 列表排版 */
+        ul { list-style: none; margin-top: 6px; }
+        li {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.7;
+            color: #3c5a4d;
+        }
+        li::before {
+            content: "•";
+            color: var(--accent-color);
+            font-size: 2rem;
+            line-height: 1.1;
+            margin-right: 15px;
+        }
+        li b { color: var(--primary-text); }
+
+        /* 玻璃小卡与网格 */
+        .card {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 20px;
+            padding: 24px 28px;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; width: 100%; }
+
+        .stat-num {
+            font-size: 2.9rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #17555c, #0f9494);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .stat-label { margin-top: 8px; font-size: 1.2rem; color: var(--primary-text); font-weight: 600; }
+        .stat-note { margin-top: 4px; font-size: 1rem; color: #5f7d6f; }
+
+        .note {
+            background: rgba(15, 148, 148, 0.12);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 0 14px 14px 0;
+            padding: 14px 20px;
+            font-size: 1.15rem;
+            line-height: 1.75;
+            color: #3c5a4d;
+            max-width: 920px;
+        }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: 13px 16px;
+            text-align: left;
+            font-size: 1.18rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(31, 61, 51, 0.12);
+        }
+        .table th { color: #1f3d33; font-weight: 700; border-bottom: 2px solid var(--accent-color); }
+        .table td:first-child { font-weight: 600; color: var(--primary-text); }
+        .table td { color: #3c5a4d; }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; width: 100%; position: relative; margin-top: 8px; }
+        .timeline::before { content: ""; position: absolute; top: 10px; left: 3%; right: 3%; height: 2px; background: linear-gradient(90deg, #6ee7b7, #0f9494); opacity: .5; }
+        .tl-step { position: relative; padding-top: 34px; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 4px solid var(--accent-color); }
+        .tl-phase { font-size: .95rem; color: #0c7d7d; letter-spacing: .14em; margin-bottom: 4px; font-weight: 600; }
+        .tl-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-text); }
+        .tl-desc { font-size: 1.1rem; line-height: 1.7; color: #557263; }
+
+        /* 目录 */
+        .toc { list-style: none; width: 100%; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 18px;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 18px;
+            padding: 16px 24px;
+            margin-bottom: 14px;
+        }
+        .toc li::before { content: none; }
+        .toc .no { font-size: 1.5rem; font-weight: 700; color: #0c7d7d; font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.35rem; font-weight: 700; color: var(--primary-text); }
+        .toc .d { margin-left: auto; font-size: 1.05rem; color: #5f7d6f; }
+
+        /* 封面 / 结尾专属 */
+        .pill {
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.42);
+            border: 1px solid var(--glass-border);
+            font-size: .95rem;
+            letter-spacing: .24em;
+            color: #0c7d7d;
+            margin-bottom: 26px;
+            align-self: flex-start;
+        }
+        .cover-foot {
+            width: 100%;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(31,61,51,.16);
+            display: flex;
+            gap: 36px;
+            font-size: 1.05rem;
+            color: #5f7d6f;
+        }
+
+        /* 控制按钮 */
+        .controls {
+            position: fixed;
+            bottom: 28px;
+            right: 44px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10;
+        }
+        .controls button {
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--primary-text);
+            transition: all 0.3s;
+        }
+        .controls button:hover {
+            background: rgba(255, 255, 255, 0.55);
+            transform: translateY(-2px);
+        }
+        .counter { font-size: 1rem; color: #47665a; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+
+        .hint {
+            position: fixed;
+            bottom: 34px;
+            left: 44px;
+            font-size: .9rem;
+            color: rgba(31, 61, 51, 0.55);
+            letter-spacing: .1em;
+            z-index: 10;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 5px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+            z-index: 20;
+        }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } p, li { font-size: 1.15rem; }
+            .grid-3, .timeline { grid-template-columns: 1fr; gap: 14px; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .presentation-container { width: 92vw; height: 88vh; }
+            .toc .d { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body::before, body::after { animation: none; }
+            .slide.active { animation: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressFill"></div>
+
+    <div class="presentation-container">
+
+        <!-- 1 封面 -->
+        <section class="slide active">
+            <div class="pill">CITYWALK PLAN · 2026</div>
+            <h1>步履</h1>
+            <p>城市漫步路线企划 —— 放下手机与导航，用双脚重新丈量我们生活的这座城市。</p>
+            <p style="font-size: 1.05rem; color: #5f7d6f; margin-bottom: 0;">步履企划组 · 江野&nbsp;&nbsp;&nbsp;&nbsp;2026 年 4 月</p>
+        </section>
+
+        <!-- 2 目录 -->
+        <section class="slide">
+            <h2>这次分享的四个部分</h2>
+            <ul class="toc">
+                <li><span class="no">01</span><span class="t">为什么漫步</span><span class="d">被忽略的附近</span></li>
+                <li><span class="no">02</span><span class="t">怎么设计</span><span class="d">一条好路线的三个标准</span></li>
+                <li><span class="no">03</span><span class="t">三条路线</span><span class="d">老城 · 江畔 · 胡同</span></li>
+                <li><span class="no">04</span><span class="t">与你同行</span><span class="d">实用清单与数据</span></li>
+            </ul>
+        </section>
+
+        <!-- 3 为什么漫步 -->
+        <section class="slide">
+            <div class="kicker">01 · 为什么漫步</div>
+            <h2>我们为什么需要漫步</h2>
+            <ul>
+                <li><span><b>附近在消失：</b>通勤、外卖、网购让我们不再认识街角的店。</span></li>
+                <li><span><b>速度太快：</b>地铁两站路只要四分钟，也错过了整条街的春天。</span></li>
+                <li><span><b>城市的细节：</b>砖缝里的草、老墙上的字，只有慢下来才看得见。</span></li>
+                <li><span><b>身心都需要：</b>每周三次、每次三十分钟的步行，是最便宜的疗愈。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">去年 214 位漫步参与者留言里，出现最多的词不是「风景」，而是「原来我住的地方这么有意思」。</div>
+        </section>
+
+        <!-- 4 设计标准 -->
+        <section class="slide">
+            <div class="kicker">02 · 怎么设计</div>
+            <h2>一条好路线的三个标准</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">有故事</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">每五百米有一个可以讲出来的地点：老字号、旧邮筒、一块碑，都行。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">有停留</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">沿途安排两三处歇脚点，能坐下来喝口水、看看来往的人。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">不回头</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">走成一个环线或止于地铁站，全程 5–8 公里，两小时刚刚好。</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 22px;">设计口诀：一半眼睛看，一半脚底走，剩下的一半留给意外的转角。</div>
+        </section>
+
+        <!-- 5 老城线 -->
+        <section class="slide">
+            <div class="kicker">03 · 三条路线</div>
+            <h2>老城线：三个转角的百年</h2>
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-phase">STOP 1 · 6.8 KM</div>
+                    <div class="tl-name">钟楼早市</div>
+                    <div class="tl-desc">从一碗豆浆油条开始，看老街坊怎么拉开一天的序幕。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">STOP 2</div>
+                    <div class="tl-name">骑楼旧街</div>
+                    <div class="tl-desc">南洋风格的连廊骑楼，五金铺与裁缝店还开着，时间在这里慢半拍。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">STOP 3</div>
+                    <div class="tl-name">老邮局咖啡馆</div>
+                    <div class="tl-desc">1936 年的邮局改成的咖啡馆，可以给三个月后的自己寄一张明信片。</div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 24px;">全程约 2.5 小时，适合第一次参加漫步的朋友，周六上午固定发团。</div>
+        </section>
+
+        <!-- 6 江畔线 -->
+        <section class="slide">
+            <div class="kicker">03 · 三条路线</div>
+            <h2>江畔线：看水，也看人</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">老渡口</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">两块钱的轮渡坐四个来回，江风比任何空调都熨帖。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">滨江步道</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">4 公里亲水岸线，钓鱼的大爷、写生的学生、跑步的年轻人各得其所。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">夜市收尾</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">在华灯初上的夜市收官，一串烤豆腐给两小时的步行画上句号。</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 22px;">傍晚 5 点出发最佳：一次路线，看遍日落、华灯与人间烟火。</div>
+        </section>
+
+        <!-- 7 胡同线 -->
+        <section class="slide">
+            <div class="kicker">03 · 三条路线</div>
+            <h2>胡同线：巷子里的日常</h2>
+            <ul>
+                <li><span><b>槐花巷：</b>四月槐花香到走不动路，巷口的修表匠守了四十年。</span></li>
+                <li><span><b>菜市口：</b>清晨的菜市场是城市最诚实的博物馆，什么都新鲜。</span></li>
+                <li><span><b>大杂院门口：</b>鸟笼、象棋、竹躺椅——生活的松弛感都在这儿。</span></li>
+                <li><span><b>巷尾书店：</b>只有 12 平米，但店主读过的书比谁都多。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">胡同线路窄人少，请轻声慢行：我们是客人，巷子里的人才是主人。</div>
+        </section>
+
+        <!-- 8 实用清单 -->
+        <section class="slide">
+            <div class="kicker">04 · 与你同行</div>
+            <h2>出发之前的准备清单</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>季节</th><th>推荐时段</th><th>穿着建议</th><th>补给提醒</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>春</td><td>上午 9:00–11:30</td><td>防风外套 · 舒适徒步鞋</td><td>过敏体质备好口罩</td></tr>
+                    <tr><td>夏</td><td>傍晚 17:00–19:30</td><td>速干衣 · 遮阳帽 · 防晒</td><td>人均带足 500ml 水</td></tr>
+                    <tr><td>秋</td><td>下午 14:30–17:00</td><td>薄针织衫 · 老城多风</td><td>落叶季拍照自带滤镜</td></tr>
+                    <tr><td>冬</td><td>中午 11:00–13:30</td><td>羽绒服 · 防滑鞋底</td><td>路线缩短至 4 公里</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 9 数据 -->
+        <section class="slide">
+            <div class="kicker">04 · 与你同行</div>
+            <h2>一年漫步交出的数据</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="stat-num">1,872 人</div>
+                    <div class="stat-label">累计参与</div>
+                    <div class="stat-note">从 12 岁的小学生到 78 岁的爷爷</div>
+                </div>
+                <div class="card">
+                    <div class="stat-num">6.8 km</div>
+                    <div class="stat-label">场均里程</div>
+                    <div class="stat-note">相当于绕西湖一圈的五分之三</div>
+                </div>
+                <div class="card">
+                    <div class="stat-num">94%</div>
+                    <div class="stat-label">愿意再次参加</div>
+                    <div class="stat-note">口碑推荐是唯一的获客渠道</div>
+                </div>
+            </div>
+            <p style="margin-top: 22px; margin-bottom: 0;">2026 年计划再开 6 条新线：菜市场专线、建筑新与旧、河流溯源……慢慢走，都会到。</p>
+        </section>
+
+        <!-- 10 结尾 -->
+        <section class="slide">
+            <div class="kicker">THANK YOU</div>
+            <h1>城市的美，要走着看</h1>
+            <p>每周六早上九点，钟楼地铁站 B 口，我们不见不散。</p>
+            <div class="cover-foot">
+                <span>报名：公众号「步履 Citywalk」</span>
+                <span>合作：hi@bulv.club</span>
+                <span>路线共创：bulv.club/routes</span>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="controls">
+        <button data-action="prev">上一页</button>
+        <span class="counter" id="pageCounter">1 / 10</span>
+        <button data-action="next">下一页</button>
+    </div>
+    <div class="hint">← → 翻页 · F 全屏</div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

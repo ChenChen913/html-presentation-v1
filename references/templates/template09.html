@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暖灶 · 社区食堂品牌介绍 — 暖杏玻璃模板</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --primary-text: #4a3325;
+            --accent-color: #c96f4a;
+            --bg-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-text);
+        }
+
+        /* 漂移的暖色光斑 */
+        body::before, body::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            z-index: -1;
+            opacity: .55;
+        }
+        body::before {
+            width: 46vw; height: 46vw;
+            left: -12vw; top: -14vh;
+            background: rgba(255, 236, 200, 0.9);
+            animation: driftA 26s ease-in-out infinite alternate;
+        }
+        body::after {
+            width: 40vw; height: 40vw;
+            right: -10vw; bottom: -16vh;
+            background: rgba(250, 190, 160, 0.8);
+            animation: driftB 32s ease-in-out infinite alternate;
+        }
+        @keyframes driftA { to { transform: translate(9vw, 7vh) scale(1.12); } }
+        @keyframes driftB { to { transform: translate(-8vw, -6vh) scale(1.08); } }
+
+        /* 幻灯片容器 */
+        .presentation-container {
+            width: 85vw;
+            height: 82vh;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%; height: 100%;
+            padding: clamp(40px, 6vh, 60px) clamp(44px, 5vw, 64px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px 0 rgba(160, 96, 60, 0.15);
+        }
+        .slide.active { display: flex; animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 标题排版 */
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #6b3b23, #c96f4a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 28px;
+            color: #54382a;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 20px;
+            line-height: 1.3;
+        }
+        .kicker {
+            font-size: 1rem;
+            letter-spacing: .3em;
+            color: #a85a38;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            max-width: 860px;
+            margin-bottom: 20px;
+            color: #5c463a;
+        }
+
+        /* 列表排版 */
+        ul { list-style: none; margin-top: 6px; }
+        li {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.7;
+            color: #63503f;
+        }
+        li::before {
+            content: "•";
+            color: var(--accent-color);
+            font-size: 2rem;
+            line-height: 1.1;
+            margin-right: 15px;
+        }
+        li b { color: var(--primary-text); }
+
+        /* 玻璃小卡与网格 */
+        .card {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 20px;
+            padding: 24px 28px;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; width: 100%; }
+
+        .stat-num {
+            font-size: 2.9rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #6b3b23, #c96f4a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .stat-label { margin-top: 8px; font-size: 1.2rem; color: var(--primary-text); font-weight: 600; }
+        .stat-note { margin-top: 4px; font-size: 1rem; color: #8a7362; }
+
+        .note {
+            background: rgba(201, 111, 74, 0.13);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 0 14px 14px 0;
+            padding: 14px 20px;
+            font-size: 1.15rem;
+            line-height: 1.75;
+            color: #63503f;
+            max-width: 920px;
+        }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: 13px 16px;
+            text-align: left;
+            font-size: 1.18rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(74, 51, 37, 0.12);
+        }
+        .table th { color: #4a3325; font-weight: 700; border-bottom: 2px solid var(--accent-color); }
+        .table td:first-child { font-weight: 600; color: var(--primary-text); }
+        .table td { color: #63503f; }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; width: 100%; position: relative; margin-top: 8px; }
+        .timeline::before { content: ""; position: absolute; top: 10px; left: 3%; right: 3%; height: 2px; background: linear-gradient(90deg, #e8a87c, #c96f4a); opacity: .5; }
+        .tl-step { position: relative; padding-top: 34px; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 4px solid var(--accent-color); }
+        .tl-phase { font-size: .95rem; color: #a85a38; letter-spacing: .14em; margin-bottom: 4px; font-weight: 600; }
+        .tl-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-text); }
+        .tl-desc { font-size: 1.1rem; line-height: 1.7; color: #7a6452; }
+
+        /* 目录 */
+        .toc { list-style: none; width: 100%; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 18px;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 18px;
+            padding: 16px 24px;
+            margin-bottom: 14px;
+        }
+        .toc li::before { content: none; }
+        .toc .no { font-size: 1.5rem; font-weight: 700; color: #a85a38; font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.35rem; font-weight: 700; color: var(--primary-text); }
+        .toc .d { margin-left: auto; font-size: 1.05rem; color: #8a7362; }
+
+        /* 封面 / 结尾专属 */
+        .pill {
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.42);
+            border: 1px solid var(--glass-border);
+            font-size: .95rem;
+            letter-spacing: .24em;
+            color: #a85a38;
+            margin-bottom: 26px;
+            align-self: flex-start;
+        }
+        .cover-foot {
+            width: 100%;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(74,51,37,.16);
+            display: flex;
+            gap: 36px;
+            font-size: 1.05rem;
+            color: #8a7362;
+        }
+
+        /* 控制按钮 */
+        .controls {
+            position: fixed;
+            bottom: 28px;
+            right: 44px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10;
+        }
+        .controls button {
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--primary-text);
+            transition: all 0.3s;
+        }
+        .controls button:hover {
+            background: rgba(255, 255, 255, 0.55);
+            transform: translateY(-2px);
+        }
+        .counter { font-size: 1rem; color: #6d5745; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+
+        .hint {
+            position: fixed;
+            bottom: 34px;
+            left: 44px;
+            font-size: .9rem;
+            color: rgba(74, 51, 37, 0.55);
+            letter-spacing: .1em;
+            z-index: 10;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 5px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+            z-index: 20;
+        }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } p, li { font-size: 1.15rem; }
+            .grid-3, .timeline { grid-template-columns: 1fr; gap: 14px; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .presentation-container { width: 92vw; height: 88vh; }
+            .toc .d { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body::before, body::after { animation: none; }
+            .slide.active { animation: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressFill"></div>
+
+    <div class="presentation-container">
+
+        <!-- 1 封面 -->
+        <section class="slide active">
+            <div class="pill">BRAND STORY · 2026</div>
+            <h1>暖灶</h1>
+            <p>一间开在社区里的食堂 —— 让每一位邻居，都能在楼下吃上一顿热气腾腾的家常饭。</p>
+            <p style="font-size: 1.05rem; color: #8a7362; margin-bottom: 0;">暖灶品牌团队 · 陈晚晴&nbsp;&nbsp;&nbsp;&nbsp;2026 年 4 月</p>
+        </section>
+
+        <!-- 2 目录 -->
+        <section class="slide">
+            <h2>今天想跟大家聊四件事</h2>
+            <ul class="toc">
+                <li><span class="no">01</span><span class="t">缘起</span><span class="d">一顿饭，难住了谁</span></li>
+                <li><span class="no">02</span><span class="t">坚持</span><span class="d">暖灶的三个原则</span></li>
+                <li><span class="no">03</span><span class="t">运转</span><span class="d">小食堂的大逻辑</span></li>
+                <li><span class="no">04</span><span class="t">同行</span><span class="d">走向更多社区</span></li>
+            </ul>
+        </section>
+
+        <!-- 3 缘起 -->
+        <section class="slide">
+            <div class="kicker">01 · 缘起</div>
+            <h2>一顿饭，难住了谁</h2>
+            <ul>
+                <li><span><b>独居长者：</b>一个人开火嫌麻烦，天天凑合，营养跟不上。</span></li>
+                <li><span><b>双职工家庭：</b>下班到家七点，做饭一小时、吃饭十分钟。</span></li>
+                <li><span><b>外卖依赖：</b>高油高盐重口味，吃久了胃和钱包都在抗议。</span></li>
+                <li><span><b>社区食堂缺位：</b>老城区网点少、口味单一，年轻人觉得「老年味」。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">我们走访了 5 个社区、312 户家庭：68% 的受访者愿意在家门口吃「像家里做的」那顿饭，只要价格公道、油盐放心。</div>
+        </section>
+
+        <!-- 4 三个坚持 -->
+        <section class="slide">
+            <div class="kicker">02 · 坚持</div>
+            <h2>暖灶的三个坚持</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">现炒现做</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">中央厨房只做净菜与预制半成品，最后一道锅气一定在门店现场完成。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">少油少盐</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">每道菜标注油盐克数，菜单每季由营养师与居民代表一起评审。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">价格实在</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">两荤一素一汤 15 元封顶，60 岁以上长者再享 8 折，明码标价。</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 22px;">原则只有一句话：做给自家长辈吃的水准，才端得上邻居家餐桌。</div>
+        </section>
+
+        <!-- 5 一周菜单 -->
+        <section class="slide">
+            <div class="kicker">02 · 坚持</div>
+            <h2>一周菜单长什么样</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>星期</th><th>主菜</th><th>副菜</th><th>例汤</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>周一</td><td>红烧狮子头</td><td>蒜蓉时蔬 · 番茄炒蛋</td><td>冬瓜排骨汤</td></tr>
+                    <tr><td>周二</td><td>黄焖鸡块</td><td>手撕包菜 · 凉拌豆腐</td><td>紫菜蛋花汤</td></tr>
+                    <tr><td>周三</td><td>清蒸鲈鱼</td><td>地三鲜 · 白灼菜心</td><td>玉米胡萝卜汤</td></tr>
+                    <tr><td>周四</td><td>咖喱牛腩</td><td>虎皮青椒 · 蒸水蛋</td><td>萝卜牛尾汤</td></tr>
+                    <tr><td>周五</td><td>秘制卤肉</td><td>醋溜土豆丝 · 上汤娃娃菜</td><td>海带黄豆汤</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 6 试运营数据 -->
+        <section class="slide">
+            <div class="kicker">02 · 坚持</div>
+            <h2>试运营三个月的成绩单</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="stat-num">426 份</div>
+                    <div class="stat-label">日均出餐</div>
+                    <div class="stat-note">高峰期排队不超过 8 分钟</div>
+                </div>
+                <div class="card">
+                    <div class="stat-num">87%</div>
+                    <div class="stat-label">周复购率</div>
+                    <div class="stat-note">回头客推荐了 1,100 多位邻居</div>
+                </div>
+                <div class="card">
+                    <div class="stat-num">14.6 元</div>
+                    <div class="stat-label">客单均价</div>
+                    <div class="stat-note">长者折后约 11.7 元</div>
+                </div>
+            </div>
+            <p style="margin-top: 22px; margin-bottom: 0;">最受欢迎的番茄炒蛋累计卖出 2.3 万份——家常菜的好，从来不需要证明。</p>
+        </section>
+
+        <!-- 7 运转模式 -->
+        <section class="slide">
+            <div class="kicker">03 · 运转</div>
+            <h2>一个小食堂怎么运转</h2>
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-phase">第一步</div>
+                    <div class="tl-name">中央厨房</div>
+                    <div class="tl-desc">统一采购、清洗、切配，清晨冷链配送到店，食安全程可追溯。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">第二步</div>
+                    <div class="tl-name">社区门店</div>
+                    <div class="tl-desc">60–80 平米小店型，明档现炒，堂食外带皆可，覆盖步行 10 分钟生活圈。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">第三步</div>
+                    <div class="tl-name">邻里共治</div>
+                    <div class="tl-desc">志愿者轮值打汤收碗可兑换餐券，菜单季度评审让居民自己投票。</div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 24px;">单店模型跑通后，第四个月实现现金流打平，毛利率稳定在 22% 左右。</div>
+        </section>
+
+        <!-- 8 价格对比 -->
+        <section class="slide">
+            <div class="kicker">03 · 运转</div>
+            <h2>同样一顿饭，差别在哪</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>维度</th><th>点外卖</th><th>商场餐厅</th><th>暖灶</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>人均花费</td><td>25–35 元</td><td>50–80 元</td><td>15 元封顶</td></tr>
+                    <tr><td>油盐可控</td><td>看不见后厨</td><td>部分明厨</td><td>油盐克数上墙</td></tr>
+                    <tr><td>等餐时间</td><td>30 分钟起送</td><td>周末等位 40 分钟</td><td>步行 10 分钟即达</td></tr>
+                    <tr><td>人情味</td><td>骑手放门口</td><td>各吃各的</td><td>邻居拼桌，越吃越熟</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 9 未来计划 -->
+        <section class="slide">
+            <div class="kicker">04 · 同行</div>
+            <h2>下一步，走向更多社区</h2>
+            <ul>
+                <li><span><b>2026 Q2：</b>开出第 2、3 家门店，进入两个老城区街道。</span></li>
+                <li><span><b>2026 Q3：</b>上线「长者餐补」计划，联合街道为独居老人送餐上门。</span></li>
+                <li><span><b>2026 Q4：</b>中央厨房二期投产，菜单扩充到 60 道，冬季进补系列上线。</span></li>
+                <li><span><b>长期愿景：</b>让每个步行 10 分钟的圈子里，都有一盏暖灶的灯。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">目标：三年内服务 30 个社区，把「好好吃饭」这件小事，做成邻里的日常。</div>
+        </section>
+
+        <!-- 10 结尾 -->
+        <section class="slide">
+            <div class="kicker">THANK YOU</div>
+            <h1>一饭一蔬，皆是日常</h1>
+            <p>暖灶首批三家门店现已开放试吃，欢迎来店里坐坐，尝一口热乎的。</p>
+            <div class="cover-foot">
+                <span>门店：梧桐街 12 号（首店）</span>
+                <span>合作：hello@nuanzao.cn</span>
+                <span>微信公众号：暖灶食堂</span>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="controls">
+        <button data-action="prev">上一页</button>
+        <span class="counter" id="pageCounter">1 / 10</span>
+        <button data-action="next">下一页</button>
+    </div>
+    <div class="hint">← → 翻页 · F 全屏</div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曜夜 NightOwl · 影像旗舰新品发布 — 深色发布会 Keynote 模板</title>
+    <style>
+        :root {
+            --bg: #0b0b0f;              /* 近黑 */
+            --ink: #f5f2ea;             /* 暖白 */
+            --ink-soft: #c9c2b4;        /* 次级暖灰 */
+            --ink-faint: #9a9284;       /* 弱化 */
+            --accent: #d9a62e;          /* 蜂蜜金 */
+            --accent-deep: #b0722e;     /* 暗琥珀（渐变收尾） */
+            --glass-fill-a: rgba(255, 255, 255, 0.10);
+            --glass-fill-b: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.17);
+            --glass-line: rgba(245, 242, 234, 0.12);
+            --card-shadow: 0 34px 80px -26px rgba(0, 0, 0, 0.75);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        /* ===== 黑场氛围：暗金/暗琥珀径向光晕 + 极细噪点 ===== */
+        .glow { position: fixed; border-radius: 50%; filter: blur(95px); pointer-events: none; z-index: 0; }
+        .g1 {
+            width: 56vw; height: 56vw; left: -14vw; top: -20vw;
+            background: radial-gradient(circle, rgba(217, 166, 46, 0.17) 0%, rgba(217, 166, 46, 0) 70%);
+            animation: drift1 26s ease-in-out infinite alternate;
+        }
+        .g2 {
+            width: 48vw; height: 48vw; right: -12vw; bottom: -16vw;
+            background: radial-gradient(circle, rgba(176, 114, 46, 0.14) 0%, rgba(176, 114, 46, 0) 70%);
+            animation: drift2 32s ease-in-out infinite alternate;
+        }
+        .g3 {
+            width: 30vw; height: 30vw; right: 16vw; top: -10vw;
+            background: radial-gradient(circle, rgba(245, 242, 234, 0.05) 0%, rgba(245, 242, 234, 0) 72%);
+            animation: drift1 22s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes drift1 { to { transform: translate(6vw, 5vh) scale(1.08); } }
+        @keyframes drift2 { to { transform: translate(-5vw, -4vh) scale(1.10); } }
+
+        /* 极细噪点：纯 CSS 点阵纹理（零依赖） */
+        .grain {
+            position: fixed; inset: 0; pointer-events: none; z-index: 1;
+            background-image: radial-gradient(rgba(245, 242, 234, 0.5) 0.5px, transparent 0.5px);
+            background-size: 4px 4px;
+            opacity: 0.05;
+        }
+
+        /* ===== 循环扫光：每 8s 一道倾斜柔光，白透明度 ≤8% ===== */
+        .sheen { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 2; }
+        .sheen::before {
+            content: ""; position: absolute; top: -25%; bottom: -25%; width: 36%;
+            left: -45%; transform: skewX(-16deg);
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0) 100%);
+            animation: sweep 8s ease-in-out infinite;
+        }
+        @keyframes sweep {
+            0%, 52% { left: -45%; }
+            82%, 100% { left: 150%; }
+        }
+
+        /* ===== 幻灯片：每页一个 100vh 全屏 section ===== */
+        .stage { position: relative; width: 100%; height: 100vh; z-index: 3; }
+        .slide {
+            position: absolute; inset: 0;
+            display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            padding: clamp(40px, 7vh, 72px) clamp(48px, 6.5vw, 116px);
+            overflow: hidden;
+        }
+        .slide.active { display: flex; animation: fadeIn 0.7s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(22px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 元素进场：淡入上移 0.6s，同级错落 80ms */
+        .slide.active .r1 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .06s both; }
+        .slide.active .r2 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .14s both; }
+        .slide.active .r3 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .22s both; }
+        .slide.active .r4 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .30s both; }
+        .slide.active .r5 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .38s both; }
+        .slide.active .r6 { animation: rise .6s cubic-bezier(.22,.8,.36,1) .46s both; }
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wrap { width: 100%; max-width: 1210px; }
+
+        /* ===== Keynote 排版层级 ===== */
+        .kicker {
+            font-size: 1rem; font-weight: 600;
+            letter-spacing: 0.34em; text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 26px;
+        }
+        h1 {
+            font-size: 6rem; font-weight: 700;
+            line-height: 1.06; letter-spacing: 0.02em;
+            color: var(--ink);
+            margin-bottom: 26px;
+            white-space: nowrap;
+        }
+        h2 {
+            font-size: 2.75rem; font-weight: 700;
+            line-height: 1.15; letter-spacing: 0.01em;
+            color: var(--ink);
+            margin-bottom: 18px;
+            white-space: nowrap;
+        }
+        .lede {
+            font-size: 1.5rem; font-weight: 400;
+            line-height: 1.7; color: var(--ink-soft);
+            max-width: 46em;
+            margin-bottom: 18px;
+        }
+        .sub {
+            font-size: 1.15rem; line-height: 1.75;
+            color: var(--ink-faint);
+            max-width: 52em;
+        }
+
+        /* ===== 深色玻璃卡片：深色半透明 + backdrop blur + 内侧亮边 + 深投影 + 彩虹色散（更明显） ===== */
+        .glass {
+            position: relative;
+            background: linear-gradient(135deg, var(--glass-fill-a) 0%, var(--glass-fill-b) 100%);
+            backdrop-filter: blur(22px) saturate(140%);
+            -webkit-backdrop-filter: blur(22px) saturate(140%);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.16),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+                var(--card-shadow);
+            border-radius: 30px;
+        }
+        /* 边缘彩虹色散：红-橙-蓝渐变光晕（深色底上更明显） */
+        .glass::before {
+            content: ""; position: absolute; inset: -3px; z-index: -1;
+            border-radius: 33px;
+            background: linear-gradient(118deg,
+                rgba(255, 96, 64, 0.6) 0%,
+                rgba(255, 176, 64, 0.6) 38%,
+                rgba(217, 166, 46, 0.5) 55%,
+                rgba(108, 148, 255, 0.6) 100%);
+            filter: blur(16px);
+            opacity: 0.32;
+        }
+
+        /* ===== 3D 玻璃方块（封面主角，深色版） ===== */
+        .cube-scene { flex-shrink: 0; position: relative; }
+        .cube {
+            width: 208px; height: 208px; border-radius: 34px;
+            transform: rotate3d(1, -0.6, 0.12, 24deg);
+            background:
+                linear-gradient(150deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 46%, rgba(217, 166, 46, 0.10) 100%);
+            backdrop-filter: blur(18px) saturate(150%);
+            -webkit-backdrop-filter: blur(18px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow:
+                inset 0 2px 0 rgba(255, 255, 255, 0.22),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+                inset -14px -18px 34px rgba(217, 166, 46, 0.12),
+                0 46px 90px -22px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+        /* 方块棱边彩虹色散 */
+        .cube::before {
+            content: ""; position: absolute; inset: -4px; z-index: -1;
+            border-radius: 38px;
+            background: linear-gradient(118deg,
+                rgba(255, 96, 64, 0.65) 0%, rgba(255, 176, 64, 0.65) 40%,
+                rgba(217, 166, 46, 0.55) 55%, rgba(108, 148, 255, 0.65) 100%);
+            filter: blur(19px);
+            opacity: 0.38;
+        }
+        /* 顶面高光，强化玻璃棱边 */
+        .cube::after {
+            content: ""; position: absolute; left: 8%; right: 42%; top: 6%; height: 26%;
+            border-radius: 22px;
+            background: linear-gradient(115deg, rgba(255, 255, 255, 0.30), rgba(255, 255, 255, 0.02));
+            filter: blur(1px);
+        }
+        .cube.small {
+            width: 96px; height: 96px; border-radius: 20px;
+            position: absolute; right: -52px; bottom: -34px;
+            transform: rotate3d(1, -0.6, 0.12, 24deg);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+                0 26px 52px -16px rgba(0, 0, 0, 0.75);
+        }
+        .cube.small::after { border-radius: 14px; left: 10%; right: 40%; top: 8%; height: 30%; }
+
+        /* ===== 要点玻璃横卡 ===== */
+        .row-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; width: 100%; margin-top: 34px; }
+        .row-card { padding: 30px 30px 26px; }
+        .row-card .tag {
+            display: inline-block; align-self: flex-start;
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.22em;
+            color: var(--accent); margin-bottom: 14px;
+        }
+        .row-card .name { font-size: 1.45rem; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+        .row-card .desc { font-size: 1.1rem; line-height: 1.7; color: var(--ink-soft); }
+
+        /* ===== 数据大字 ===== */
+        .big-num {
+            font-size: 7.5rem; font-weight: 700; line-height: 1.02;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+            margin-bottom: 20px;
+        }
+        .big-num small { font-size: 2.6rem; font-weight: 600; color: var(--ink-soft); margin-left: 8px; }
+        .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; width: 100%; margin-top: 52px; }
+        .mini-stat { padding: 24px 28px; }
+        .mini-stat .n { font-size: 2.4rem; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.15; }
+        .mini-stat .n b { color: var(--accent); }
+        .mini-stat .t { font-size: 1rem; color: var(--ink-faint); margin-top: 8px; line-height: 1.6; }
+
+        /* ===== 图表页通用 ===== */
+        .chart-shell { padding: 34px 38px 26px; width: 100%; margin-top: 30px; }
+        .chart-note { font-size: 1rem; color: var(--ink-faint); margin-top: 16px; line-height: 1.65; }
+
+        /* ===== 玻璃表格（深色） ===== */
+        .table-shell { padding: 12px 34px; width: 100%; margin-top: 30px; }
+        table.gtable { width: 100%; border-collapse: collapse; }
+        .gtable th {
+            text-align: left; font-size: 0.98rem; font-weight: 700;
+            letter-spacing: 0.10em; color: var(--accent);
+            padding: 16px 14px 12px;
+            border-bottom: 1.5px solid rgba(217, 166, 46, 0.45);
+        }
+        .gtable td {
+            font-size: 1.14rem; line-height: 1.6; color: var(--ink-soft);
+            padding: 15px 14px;
+            border-bottom: 1px solid var(--glass-line);
+        }
+        .gtable tr:last-child td { border-bottom: none; }
+        .gtable td:first-child { font-weight: 700; color: var(--ink); }
+        .gtable .num { font-variant-numeric: tabular-nums; }
+
+        /* ===== 环形图图例 ===== */
+        .donut-row { display: grid; grid-template-columns: 300px 1fr; gap: 44px; align-items: center; width: 100%; margin-top: 30px; }
+        .legend { list-style: none; }
+        .legend li { display: flex; align-items: baseline; gap: 14px; padding: 15px 4px; border-bottom: 1px solid var(--glass-line); }
+        .legend li:last-child { border-bottom: none; }
+        .legend .dot { width: 14px; height: 14px; border-radius: 4px; flex-shrink: 0; align-self: center; }
+        .legend .lname { font-size: 1.2rem; font-weight: 600; color: var(--ink); }
+        .legend .ldesc { font-size: 1rem; color: var(--ink-faint); margin-left: auto; }
+
+        /* ===== 时间线 ===== */
+        .tl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; margin-top: 40px; position: relative; }
+        .tl::before {
+            content: ""; position: absolute; top: 11px; left: 4%; right: 4%; height: 2px;
+            background: linear-gradient(90deg, rgba(217,166,46,.75), rgba(176,114,46,.75));
+        }
+        .tl-step { position: relative; padding-top: 42px; }
+        .tl-step::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 22px; height: 22px;
+            border-radius: 50%; background: #0b0b0f;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 18px rgba(217,166,46,.45);
+        }
+        .tl-phase { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 8px; }
+        .tl-name { font-size: 1.5rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+        .tl-desc { font-size: 1.08rem; line-height: 1.7; color: var(--ink-soft); }
+
+        /* ===== 章节过渡页 ===== */
+        .chap-num {
+            font-size: 11rem; font-weight: 700; line-height: 0.9;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(217, 166, 46, 0.8);
+            letter-spacing: 0.04em;
+            margin-bottom: 18px;
+        }
+        .chap-title { font-size: 3.4rem; font-weight: 700; color: var(--ink); margin-bottom: 20px; white-space: nowrap; }
+        .glass-bar { width: 108px; height: 7px; border-radius: 4px; margin-bottom: 30px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-deep)); }
+
+        /* ===== 封面 / 结尾底部 meta ===== */
+        .foot-meta {
+            display: flex; gap: 40px;
+            border-top: 1px solid var(--glass-line);
+            padding-top: 22px; margin-top: 44px;
+            font-size: 1.02rem; color: var(--ink-faint); letter-spacing: 0.04em;
+        }
+
+        .cover-grid { display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; width: 100%; }
+        .center-col { text-align: center; }
+        .center-col .glass-bar { margin-left: auto; margin-right: auto; }
+        .center-col .lede { margin-left: auto; margin-right: auto; }
+
+        /* ===== 导航控件（深色玻璃化） ===== */
+        .controls {
+            position: fixed; bottom: 30px; right: 46px; z-index: 10;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .controls button {
+            padding: 11px 24px; border-radius: 999px; cursor: pointer;
+            border: 1px solid var(--glass-border);
+            background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 10px 24px -10px rgba(0,0,0,.7);
+            font-family: inherit; font-size: 0.95rem; color: var(--ink);
+            transition: all 0.3s;
+        }
+        .controls button:hover { background: var(--accent); color: #0b0b0f; transform: translateY(-2px); }
+        .counter { font-size: 0.95rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; letter-spacing: 0.08em; }
+
+        .hint {
+            position: fixed; bottom: 36px; left: 48px; z-index: 10;
+            font-size: 0.85rem; color: var(--ink-faint); letter-spacing: 0.12em;
+        }
+
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 4px; z-index: 20;
+            background: linear-gradient(90deg, var(--accent-deep), var(--accent));
+            transition: width 0.35s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* ===== 小屏降档（固定 rem 体系，媒体查询整体降档） ===== */
+        @media (max-width: 1240px) {
+            h1 { font-size: 4.6rem; } h2 { font-size: 2.3rem; }
+            .big-num { font-size: 6rem; }
+            .chap-num { font-size: 8.5rem; } .chap-title { font-size: 2.7rem; }
+            .row-cards { gap: 18px; }
+        }
+        @media (max-width: 960px) {
+            h1 { font-size: 3.4rem; white-space: normal; }
+            h2 { font-size: 1.9rem; white-space: normal; }
+            .lede { font-size: 1.25rem; }
+            .big-num { font-size: 4.4rem; } .big-num small { font-size: 1.8rem; }
+            .chap-num { font-size: 6rem; } .chap-title { font-size: 2.1rem; }
+            .row-cards, .mini-stats { grid-template-columns: 1fr; gap: 14px; }
+            .cover-grid { grid-template-columns: 1fr; }
+            .cube-scene { display: none; }
+            .donut-row { grid-template-columns: 1fr; gap: 20px; }
+            .donut-row svg { max-width: 220px; margin: 0 auto; display: block; }
+            .tl { grid-template-columns: 1fr; gap: 18px; }
+            .tl::before { display: none; }
+            .tl-step { padding-top: 0; padding-left: 40px; }
+            .tl-step::before { top: 2px; }
+            .gtable td { font-size: 1rem; padding: 12px 8px; }
+            .gtable th { padding: 12px 8px 10px; }
+            .hint { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .glow, .sheen::before, .slide.active, .slide.active [class*="r"] { animation: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow g1"></div>
+    <div class="glow g2"></div>
+    <div class="glow g3"></div>
+    <div class="grain"></div>
+    <div class="sheen"></div>
+    <div class="progress-bar" id="progressFill"></div>
+
+    <div class="stage">
+
+        <!-- 1 封面页 -->
+        <section class="slide active">
+            <div class="cover-grid">
+                <div class="wrap">
+                    <div class="kicker r1">NIGHTOWL · 影像旗舰新品发布</div>
+                    <h1 class="r2">曜夜</h1>
+                    <p class="lede r3">越黑的夜，越亮的一双眼睛。</p>
+                    <p class="sub r4">全新第二代夜瞳传感器，把城市深夜的光，一寸一寸收进你的相册。</p>
+                    <div class="foot-meta r5">
+                        <span>曜夜科技 NIGHTOWL</span>
+                        <span>2026 冬季新品发布会</span>
+                        <span>演讲人 · 陈墨</span>
+                    </div>
+                </div>
+                <div class="cube-scene r3">
+                    <div class="cube"></div>
+                    <div class="cube small"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2 章节过渡页 01 -->
+        <section class="slide">
+            <div class="wrap center-col">
+                <div class="chap-num r1">01</div>
+                <div class="glass-bar r2"></div>
+                <h2 class="chap-title r3">看见黑夜</h2>
+                <p class="lede r4">黑夜不是尽头，是另一种光线的开始。</p>
+            </div>
+        </section>
+
+        <!-- 3 要点页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">01 · 看见黑夜</div>
+                <h2 class="r2">三件事，重新定义夜拍</h2>
+                <div class="row-cards">
+                    <div class="glass row-card r3">
+                        <span class="tag">SENSOR</span>
+                        <div class="name">更大感光</div>
+                        <div class="desc">1/1.3 英寸夜瞳传感器，进光量较上代提升 76%，暗处也从容。</div>
+                    </div>
+                    <div class="glass row-card r4">
+                        <span class="tag">ENGINE</span>
+                        <div class="name">更静降噪</div>
+                        <div class="desc">曜夜影像引擎逐帧降噪，夜空纯净通透，噪点不再喧宾夺主。</div>
+                    </div>
+                    <div class="glass row-card r5">
+                        <span class="tag">FOCUS</span>
+                        <div class="name">更快追焦</div>
+                        <div class="desc">八核对焦毫秒级锁定，孩子的笑、街角的车灯，一个都不错过。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 数据大字页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">感光度 · 写进身体的本事</div>
+                <div class="big-num r2">409600<small>ISO</small></div>
+                <p class="lede r3">从黄昏拍到凌晨，一支镜头走完整个夜晚。</p>
+                <div class="mini-stats">
+                    <div class="glass mini-stat r4">
+                        <div class="n"><b>f/1.4</b></div>
+                        <div class="t">超大光圈，进光量再上一档台阶</div>
+                    </div>
+                    <div class="glass mini-stat r5">
+                        <div class="n"><b>1/1.3</b>"</div>
+                        <div class="t">大底传感器，单像素面积提升 76%</div>
+                    </div>
+                    <div class="glass mini-stat r6">
+                        <div class="n"><b>8</b> 轴</div>
+                        <div class="t">传感器位移防抖，手持长曝稳如脚架</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5 柱状图页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">实验室数据 · 标准暗光下各 500 张采样</div>
+                <h2 class="r2">越暗的夜，越见分晓</h2>
+                <div class="glass chart-shell r3">
+                    <svg viewBox="0 0 620 236" width="100%" role="img" aria-label="五档照度成片率柱状图">
+                        <defs>
+                            <linearGradient id="barG" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#e8c25a"/>
+                                <stop offset="100%" stop-color="#b0722e"/>
+                            </linearGradient>
+                        </defs>
+                        <line x1="40" y1="34"  x2="600" y2="34"  stroke="#f5f2ea" stroke-opacity="0.08" stroke-width="1"/>
+                        <line x1="40" y1="82"  x2="600" y2="82"  stroke="#f5f2ea" stroke-opacity="0.08" stroke-width="1"/>
+                        <line x1="40" y1="130" x2="600" y2="130" stroke="#f5f2ea" stroke-opacity="0.08" stroke-width="1"/>
+                        <line x1="40" y1="178" x2="600" y2="178" stroke="#f5f2ea" stroke-opacity="0.16" stroke-width="1"/>
+                        <text x="30" y="38"  font-size="12" fill="#9a9284" text-anchor="end">100%</text>
+                        <text x="30" y="86"  font-size="12" fill="#9a9284" text-anchor="end">66%</text>
+                        <text x="30" y="134" font-size="12" fill="#9a9284" text-anchor="end">33%</text>
+                        <rect x="64"  y="47.9"  width="58" height="130.1" rx="9" fill="url(#barG)"/>
+                        <rect x="166" y="49.9"  width="58" height="128.1" rx="9" fill="url(#barG)" opacity="0.88"/>
+                        <rect x="268" y="53.9"  width="58" height="124.1" rx="9" fill="url(#barG)"/>
+                        <rect x="370" y="57.8"  width="58" height="120.2" rx="9" fill="url(#barG)" opacity="0.88"/>
+                        <rect x="472" y="61.8"  width="58" height="116.2" rx="9" fill="url(#barG)" opacity="0.76"/>
+                        <text x="93"  y="37.9"  font-size="15" font-weight="700" fill="#f5f2ea" text-anchor="middle">98</text>
+                        <text x="195" y="39.9"  font-size="15" font-weight="700" fill="#f5f2ea" text-anchor="middle">97</text>
+                        <text x="297" y="43.9"  font-size="15" font-weight="700" fill="#e8c25a" text-anchor="middle">95</text>
+                        <text x="399" y="47.8"  font-size="15" font-weight="700" fill="#f5f2ea" text-anchor="middle">92</text>
+                        <text x="501" y="51.8"  font-size="15" font-weight="700" fill="#f5f2ea" text-anchor="middle">89</text>
+                        <text x="93"  y="204" font-size="15" fill="#f5f2ea" text-anchor="middle">黄昏</text>
+                        <text x="195" y="204" font-size="15" fill="#f5f2ea" text-anchor="middle">路灯</text>
+                        <text x="297" y="204" font-size="15" fill="#f5f2ea" text-anchor="middle">霓虹</text>
+                        <text x="399" y="204" font-size="15" fill="#f5f2ea" text-anchor="middle">月夜</text>
+                        <text x="501" y="204" font-size="15" fill="#f5f2ea" text-anchor="middle">星光</text>
+                        <text x="310" y="228" font-size="12" fill="#9a9284" text-anchor="middle">成片率 = 五档照度环境下可直接留存的成片占比（%）</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6 章节过渡页 02 -->
+        <section class="slide">
+            <div class="wrap center-col">
+                <div class="chap-num r1">02</div>
+                <div class="glass-bar r2"></div>
+                <h2 class="chap-title r3">夜，从此不同</h2>
+                <p class="lede r4">模式已经备好，从今晚的第一顿夜宵开始。</p>
+            </div>
+        </section>
+
+        <!-- 7 表格页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">02 · 夜景模式</div>
+                <h2 class="r2">四种夜景模式一览</h2>
+                <div class="glass table-shell r3">
+                    <table class="gtable">
+                        <thead>
+                            <tr><th>模式</th><th>曝光时长</th><th>算法</th><th>适用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>城市夜景</td><td class="num">1/4 s</td><td>多帧合成</td><td>霓虹街景 · 车流</td></tr>
+                            <tr><td>星空模式</td><td class="num">30 s</td><td>轨迹叠加</td><td>郊外 · 星轨银河</td></tr>
+                            <tr><td>人像夜拍</td><td class="num">1/8 s</td><td>肤色保护</td><td>夜市 · 逆光路灯</td></tr>
+                            <tr><td>暗光延时</td><td class="num">2 h</td><td>智能抽帧</td><td>日出日落 · 云海</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="chart-note r4">全部模式默认自动识别触发，也可以在专业模式里逐项手动接管。</p>
+            </div>
+        </section>
+
+        <!-- 8 环形图页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">内测报告 · 首批体验用户</div>
+                <h2 class="r2">夜晚，被拍得更多了</h2>
+                <div class="donut-row">
+                    <div class="r3">
+                        <svg viewBox="0 0 180 180" width="100%" role="img" aria-label="夜景拍摄时段占比环形图">
+                            <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(245,242,234,0.07)" stroke-width="20"/>
+                            <g transform="rotate(-90 90 90)">
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="#d9a62e" stroke-width="20"
+                                        stroke-dasharray="157.7 244.3" stroke-dashoffset="0" stroke-linecap="round"/>
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(245,242,234,0.55)" stroke-width="20"
+                                        stroke-dasharray="112.5 289.5" stroke-dashoffset="-161.7" stroke-linecap="round"/>
+                                <circle cx="90" cy="90" r="64" fill="none" stroke="rgba(217,166,46,0.30)" stroke-width="20"
+                                        stroke-dasharray="97.9 304.1" stroke-dashoffset="-278.2" stroke-linecap="round"/>
+                            </g>
+                            <text x="90" y="86" font-size="30" font-weight="700" fill="#f5f2ea" text-anchor="middle">87%</text>
+                            <text x="90" y="110" font-size="12.5" fill="#9a9284" text-anchor="middle">夜景成片提升</text>
+                        </svg>
+                    </div>
+                    <ul class="legend r4">
+                        <li><span class="dot" style="background:#d9a62e;"></span><span class="lname">晚间 19–22 点</span><span class="ldesc">44% · 夜市与街拍高峰</span></li>
+                        <li><span class="dot" style="background:rgba(245,242,234,0.55);"></span><span class="lname">深夜 22–1 点</span><span class="ldesc">31% · 城市霓虹与人像</span></li>
+                        <li><span class="dot" style="background:rgba(217,166,46,0.30);"></span><span class="lname">凌晨 1–6 点</span><span class="ldesc">25% · 星空与延时创作</span></li>
+                    </ul>
+                </div>
+                <p class="chart-note r5">数据来源：2026 年 7 月曜夜影像内测计划拍摄日志（n = 3,000 位用户）。</p>
+            </div>
+        </section>
+
+        <!-- 9 时间线页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">上市计划</div>
+                <h2 class="r2">曜夜，三步到你手上</h2>
+                <div class="tl">
+                    <div class="tl-step r3">
+                        <div class="tl-phase">9 月 22 日</div>
+                        <div class="tl-name">开启预订</div>
+                        <div class="tl-desc">官网与授权商城同步，预订加赠一年夜拍保险服务。</div>
+                    </div>
+                    <div class="tl-step r4">
+                        <div class="tl-phase">10 月 8 日</div>
+                        <div class="tl-name">正式首发</div>
+                        <div class="tl-desc">曜 12 / 12 Pro 双版本全渠道开售，体验店当晚举办首拍夜。</div>
+                    </div>
+                    <div class="tl-step r5">
+                        <div class="tl-phase">11 月起</div>
+                        <div class="tl-name">影像 OTA</div>
+                        <div class="tl-desc">星空与延时模式推送升级，老机型同步获得部分夜景算法。</div>
+                    </div>
+                </div>
+                <p class="chart-note r6" style="margin-top: 34px;">首发期提供 30 天试拍无忧退换，拍不满意的夜晚，随时退回来。</p>
+            </div>
+        </section>
+
+        <!-- 10 结尾页 -->
+        <section class="slide">
+            <div class="wrap">
+                <div class="kicker r1">THANK YOU</div>
+                <h1 class="r2" style="font-size: 5.2rem;">把夜晚，拍成回忆</h1>
+                <p class="lede r3">曜夜 12 系列，9 月 22 日晚 8 点开启预订——越黑的夜，越亮的一双眼睛。</p>
+                <div class="foot-meta r4">
+                    <span>曜夜科技 NIGHTOWL</span>
+                    <span>www.nightowl.example</span>
+                    <span>媒体联络 · press@nightowl.example</span>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="controls">
+        <button data-action="prev">上一页</button>
+        <span class="counter" id="pageCounter">1 / 10</span>
+        <button data-action="next">下一页</button>
+    </div>
+    <div class="hint">滚轮 / ← → 翻页 · F 全屏</div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        // 滚轮翻页：节流 750ms，避免触控板惯性连翻
+        let wheelLock = false;
+        window.addEventListener('wheel', (e) => {
+            if (wheelLock || Math.abs(e.deltaY) < 24) return;
+            wheelLock = true;
+            setTimeout(() => { wheelLock = false; }, 750);
+            e.deltaY > 0 ? next() : prev();
+        }, { passive: true });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

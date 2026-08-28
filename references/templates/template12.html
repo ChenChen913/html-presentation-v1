@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纸上山河 · 古籍特展策展方案 — 落日鎏金玻璃模板</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.35);
+            --primary-text: #4a3418;
+            --accent-color: #b0722e;
+            --bg-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-text);
+        }
+
+        /* 旋转的鎏金光晕 + 漂移暖斑 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.32) 0%, transparent 70%);
+            animation: move 24s infinite linear;
+            z-index: -2;
+        }
+        body::after {
+            content: "";
+            position: absolute;
+            width: 44vw; height: 44vw;
+            right: -12vw; bottom: -18vh;
+            border-radius: 50%;
+            filter: blur(80px);
+            background: rgba(255, 214, 170, 0.85);
+            opacity: .6;
+            animation: warmDrift 30s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+        @keyframes move {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes warmDrift { to { transform: translate(-7vw, -6vh) scale(1.12); } }
+
+        /* 幻灯片容器 */
+        .presentation-container {
+            width: 85vw;
+            height: 82vh;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%; height: 100%;
+            padding: clamp(40px, 6vh, 60px) clamp(44px, 5vw, 64px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px 0 rgba(150, 100, 40, 0.16);
+        }
+        .slide.active { display: flex; animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 标题排版 */
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #5c3a12, #b0722e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 28px;
+            color: #553c17;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 20px;
+            line-height: 1.3;
+        }
+        .kicker {
+            font-size: 1rem;
+            letter-spacing: .3em;
+            color: #99651f;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            max-width: 860px;
+            margin-bottom: 20px;
+            color: #5f4a28;
+        }
+
+        /* 列表排版 */
+        ul { list-style: none; margin-top: 6px; }
+        li {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.7;
+            color: #66512e;
+        }
+        li::before {
+            content: "•";
+            color: var(--accent-color);
+            font-size: 2rem;
+            line-height: 1.1;
+            margin-right: 15px;
+        }
+        li b { color: var(--primary-text); }
+
+        /* 玻璃小卡与网格 */
+        .card {
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 20px;
+            padding: 24px 28px;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; width: 100%; }
+
+        .stat-num {
+            font-size: 2.9rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #5c3a12, #b0722e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .stat-label { margin-top: 8px; font-size: 1.2rem; color: var(--primary-text); font-weight: 600; }
+        .stat-note { margin-top: 4px; font-size: 1rem; color: #8a7248; }
+
+        .note {
+            background: rgba(176, 114, 46, 0.12);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 0 14px 14px 0;
+            padding: 14px 20px;
+            font-size: 1.15rem;
+            line-height: 1.75;
+            color: #66512e;
+            max-width: 920px;
+        }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: 13px 16px;
+            text-align: left;
+            font-size: 1.18rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(74, 52, 24, 0.12);
+        }
+        .table th { color: #4a3418; font-weight: 700; border-bottom: 2px solid var(--accent-color); }
+        .table td:first-child { font-weight: 600; color: var(--primary-text); }
+        .table td { color: #66512e; }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; width: 100%; position: relative; margin-top: 8px; }
+        .timeline::before { content: ""; position: absolute; top: 10px; left: 3%; right: 3%; height: 2px; background: linear-gradient(90deg, #f0c076, #b0722e); opacity: .5; }
+        .tl-step { position: relative; padding-top: 34px; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 4px solid var(--accent-color); }
+        .tl-phase { font-size: .95rem; color: #99651f; letter-spacing: .14em; margin-bottom: 4px; font-weight: 600; }
+        .tl-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-text); }
+        .tl-desc { font-size: 1.1rem; line-height: 1.7; color: #77613a; }
+
+        /* 目录 */
+        .toc { list-style: none; width: 100%; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 18px;
+            background: rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.55);
+            border-radius: 18px;
+            padding: 16px 24px;
+            margin-bottom: 14px;
+        }
+        .toc li::before { content: none; }
+        .toc .no { font-size: 1.5rem; font-weight: 700; color: #99651f; font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.35rem; font-weight: 700; color: var(--primary-text); }
+        .toc .d { margin-left: auto; font-size: 1.05rem; color: #8a7248; }
+
+        /* 封面 / 结尾专属 */
+        .pill {
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.42);
+            border: 1px solid var(--glass-border);
+            font-size: .95rem;
+            letter-spacing: .24em;
+            color: #99651f;
+            margin-bottom: 26px;
+            align-self: flex-start;
+        }
+        .cover-foot {
+            width: 100%;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(74,52,24,.16);
+            display: flex;
+            gap: 36px;
+            font-size: 1.05rem;
+            color: #8a7248;
+        }
+
+        /* 控制按钮 */
+        .controls {
+            position: fixed;
+            bottom: 28px;
+            right: 44px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10;
+        }
+        .controls button {
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--primary-text);
+            transition: all 0.3s;
+        }
+        .controls button:hover {
+            background: rgba(255, 255, 255, 0.55);
+            transform: translateY(-2px);
+        }
+        .counter { font-size: 1rem; color: #6b5836; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+
+        .hint {
+            position: fixed;
+            bottom: 34px;
+            left: 44px;
+            font-size: .9rem;
+            color: rgba(74, 52, 24, 0.55);
+            letter-spacing: .1em;
+            z-index: 10;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 5px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+            z-index: 20;
+        }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } p, li { font-size: 1.15rem; }
+            .grid-3, .timeline { grid-template-columns: 1fr; gap: 14px; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .presentation-container { width: 92vw; height: 88vh; }
+            .toc .d { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body::before, body::after { animation: none; }
+            .slide.active { animation: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressFill"></div>
+
+    <div class="presentation-container">
+
+        <!-- 1 封面 -->
+        <section class="slide active">
+            <div class="pill">EXHIBITION PROPOSAL · 2026</div>
+            <h1>纸上山河</h1>
+            <p>古籍舆图与旅行记特展策展方案 —— 一张旧地图，藏着古人走过的整个世界。</p>
+            <p style="font-size: 1.05rem; color: #8a7248; margin-bottom: 0;">市博物馆展览部 · 沈青梧&nbsp;&nbsp;&nbsp;&nbsp;2026 年 4 月</p>
+        </section>
+
+        <!-- 2 目录 -->
+        <section class="slide">
+            <h2>策展方案的四个部分</h2>
+            <ul class="toc">
+                <li><span class="no">01</span><span class="t">缘起</span><span class="d">为什么做这场展览</span></li>
+                <li><span class="no">02</span><span class="t">单元</span><span class="d">四个展厅的叙事线</span></li>
+                <li><span class="no">03</span><span class="t">体验</span><span class="d">让古籍动起来</span></li>
+                <li><span class="no">04</span><span class="t">公教</span><span class="d">活动排期与传播</span></li>
+            </ul>
+        </section>
+
+        <!-- 3 缘起 -->
+        <section class="slide">
+            <div class="kicker">01 · 缘起</div>
+            <h2>为什么做这场展览</h2>
+            <ul>
+                <li><span><b>馆藏厚实：</b>本馆藏有明清舆图、行记手稿 217 件，常年沉睡库房。</span></li>
+                <li><span><b>观众想看：</b>2025 年问卷中「古籍与地图」位列最想看的展览第二名。</span></li>
+                <li><span><b>时机正好：</b>适逢建馆 70 周年，数字化修复工程首批成果刚刚完成。</span></li>
+                <li><span><b>叙事稀缺：</b>同城三年内无同题材大展，差异化窗口清晰。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">策展主张：不做文献的陈列柜，要做一场「跟着古人上路」的旅行——纸上有山河，脚下也是山河。</div>
+        </section>
+
+        <!-- 4 四个单元 -->
+        <section class="slide">
+            <div class="kicker">02 · 单元</div>
+            <h2>四个展览单元</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="kicker" style="margin-bottom: 8px;">第一单元</div>
+                    <div class="tl-name" style="margin-bottom: 6px;">舆图 · 天地经纬</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">从「天下图」到实测地图，看古人如何一步步把世界画得越来越准。</p>
+                </div>
+                <div class="card">
+                    <div class="kicker" style="margin-bottom: 8px;">第二单元</div>
+                    <div class="tl-name" style="margin-bottom: 6px;">行记 · 步履天下</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">徐霞客与马可·波罗们的手稿，每一页都是一场用脚写成的冒险。</p>
+                </div>
+                <div class="card">
+                    <div class="kicker" style="margin-bottom: 8px;">第三单元</div>
+                    <div class="tl-name" style="margin-bottom: 6px;">城迹 · 市井烟火</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">城市舆图里的桥、井、戏台与茶馆，展开一座座古城的日常。</p>
+                </div>
+                <div class="card">
+                    <div class="kicker" style="margin-bottom: 8px;">第四单元</div>
+                    <div class="tl-name" style="margin-bottom: 6px;">观澜 · 江海往来</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">漕运图与海防图并置，水路如何塑造了贸易、战争与我们的口音。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5 核心展品 -->
+        <section class="slide">
+            <div class="kicker">02 · 单元</div>
+            <h2>核心展品抢先看</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">《漕运图》卷</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">明代绢本长卷，6.8 米完整展开首秀，一条运河北上的水路纪录片。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">《皇舆全览》副本</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">康熙年间实测地图的铜版印本，中国科学制图的开端之作。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">《徐霞客游记》抄本</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">清初手抄残卷，与数字化修复页对照展出，抄书人与游历者隔空相望。</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 22px;">三件核心展品均为库房修复后首次公开，展柜恒温恒湿，低照度保护。</div>
+        </section>
+
+        <!-- 6 观展动线 -->
+        <section class="slide">
+            <div class="kicker">02 · 单元</div>
+            <h2>观展动线设计</h2>
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-phase">序厅</div>
+                    <div class="tl-name">渐入</div>
+                    <div class="tl-desc">一面 12 米的数字山水引墙，观众在光影里「翻开」第一页地图。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">主厅</div>
+                    <div class="tl-name">沉浸</div>
+                    <div class="tl-desc">四单元环形排布，动线单向不交叉，全程约 60 分钟。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">尾厅</div>
+                    <div class="tl-name">回望</div>
+                    <div class="tl-desc">把自己走过的城市钉在互动大地图上，带走一张手绘路线明信片。</div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 24px;">无障碍细节：全线坡道、盲文导览手册、珍贵展柜一律双高度设计。</div>
+        </section>
+
+        <!-- 7 数字化互动 -->
+        <section class="slide">
+            <div class="kicker">03 · 体验</div>
+            <h2>让古籍动起来</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">数字长卷</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">8K 扫描的《漕运图》落地大屏，指尖缩放可见船队、闸口与纤夫。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">互动拓印</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">复刻雕版亲手拓一张「城池图」，成品可盖章带走，全过程无墨污。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 8px;">AR 观图</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">扫描展柜旁的标记，古地图与现代街景在平板上叠合，古今对望。</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 22px;">技术原则：互动永远是配角，为「看懂原件」服务，不让观众低头玩手机。</div>
+        </section>
+
+        <!-- 8 公教活动 -->
+        <section class="slide">
+            <div class="kicker">04 · 公教</div>
+            <h2>公教活动排期</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>活动</th><th>频次</th><th>对象</th><th>形式</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>周末讲堂</td><td>每周六下午</td><td>普通观众</td><td>策展人与修复师对谈</td></tr>
+                    <tr><td>小小测绘师</td><td>每两周一次</td><td>8–12 岁亲子</td><td>工作坊 · 手绘社区地图</td></tr>
+                    <tr><td>博物馆之夜</td><td>每月一场</td><td>预约观众</td><td>夜游展厅 + 古籍灯光秀</td></tr>
+                    <tr><td>学术研讨会</td><td>展期内两场</td><td>专业研究者</td><td>舆图史学专题报告</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 9 展览信息 -->
+        <section class="slide">
+            <div class="kicker">04 · 公教</div>
+            <h2>展期、票务与传播</h2>
+            <ul>
+                <li><span><b>展期：</b>2026 年 9 月 26 日 至 2027 年 1 月 10 日，周一闭馆。</span></li>
+                <li><span><b>票务：</b>全价票 60 元，学生与长者半价，每周首个开放日免费 2,000 个名额。</span></li>
+                <li><span><b>传播：</b>「跟着古图去旅行」短视频系列先行，联合本地地铁投放主题车厢。</span></li>
+                <li><span><b>联名：</b>与邮政合作发行纪念邮票一套两枚，开展日首日封同步发售。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">预期观众 18 万人次，文创收入目标 300 万元，反哺下一批古籍修复。</div>
+        </section>
+
+        <!-- 10 结尾 -->
+        <section class="slide">
+            <div class="kicker">THANK YOU</div>
+            <h1>一纸一世界，一图一山河</h1>
+            <p>策展方案正在馆内公示，欢迎每一位同事留下批注——展览因你们而完整。</p>
+            <div class="cover-foot">
+                <span>展览部 · 沈青梧</span>
+                <span>联络：qingwu@museum.org.cn</span>
+                <span>方案公示：三楼茶水间公告栏</span>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="controls">
+        <button data-action="prev">上一页</button>
+        <span class="counter" id="pageCounter">1 / 10</span>
+        <button data-action="next">下一页</button>
+    </div>
+    <div class="hint">← → 翻页 · F 全屏</div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

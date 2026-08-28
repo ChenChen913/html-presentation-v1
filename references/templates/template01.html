@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>栖居 · 智能家居 App 产品发布 — 液态玻璃模板</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --primary-text: #2c3e50;
+            --accent-color: #74ebd5;
+            --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-text);
+        }
+
+        /* 液态背景动画效果 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: move 20s infinite linear;
+            z-index: -1;
+        }
+        @keyframes move {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 幻灯片容器 */
+        .presentation-container {
+            width: 85vw;
+            height: 82vh;
+            perspective: 1000px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%; height: 100%;
+            padding: clamp(40px, 6vh, 60px) clamp(44px, 5vw, 64px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        .slide.active { display: flex; animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 标题排版 */
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #2c3e50, #4b6cb7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 28px;
+            color: #34495e;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 20px;
+            line-height: 1.3;
+        }
+        .kicker {
+            font-size: 1rem;
+            letter-spacing: .3em;
+            color: #4b6cb7;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            max-width: 860px;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        /* 列表排版 */
+        ul {
+            list-style: none;
+            margin-top: 6px;
+        }
+        li {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.7;
+            color: #3d4f61;
+        }
+        li::before {
+            content: "•";
+            color: var(--accent-color);
+            font-size: 2rem;
+            line-height: 1.1;
+            margin-right: 15px;
+        }
+        li b { color: var(--primary-text); }
+
+        /* 玻璃小卡与网格 */
+        .card {
+            background: rgba(255,255,255,0.28);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 20px;
+            padding: 24px 28px;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; width: 100%; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; width: 100%; }
+
+        .stat-num {
+            font-size: 2.9rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #2c3e50, #4b6cb7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .stat-label { margin-top: 8px; font-size: 1.2rem; color: var(--primary-text); font-weight: 600; }
+        .stat-note { margin-top: 4px; font-size: 1rem; color: #6a7b8c; }
+        /* 统计卡进度条（家族可视化语言扩展） */
+        .stat-progress { margin-top: 10px; height: 6px; background: rgba(44, 62, 80, 0.1); border-radius: 3px; overflow: hidden; }
+        .stat-progress span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent-color), #4b6cb7); border-radius: 3px; }
+
+        .note {
+            background: rgba(116, 235, 213, 0.14);
+            border-left: 4px solid var(--accent-color);
+            border-radius: 0 14px 14px 0;
+            padding: 14px 20px;
+            font-size: 1.15rem;
+            line-height: 1.75;
+            color: #3d4f61;
+            max-width: 920px;
+        }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: 13px 16px;
+            text-align: left;
+            font-size: 1.18rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(44, 62, 80, 0.12);
+        }
+        .table th { color: #2c3e50; font-weight: 700; border-bottom: 2px solid var(--accent-color); }
+        .table td:first-child { font-weight: 600; color: var(--primary-text); }
+        .table td { color: #3d4f61; }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; width: 100%; position: relative; margin-top: 8px; }
+        .timeline::before { content: ""; position: absolute; top: 10px; left: 3%; right: 3%; height: 2px; background: linear-gradient(90deg, #74ebd5, #4b6cb7); opacity: .45; }
+        .tl-step { position: relative; padding-top: 34px; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 4px solid var(--accent-color); }
+        .tl-phase { font-size: .95rem; color: #4b6cb7; letter-spacing: .14em; margin-bottom: 4px; font-weight: 600; }
+        .tl-name { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--primary-text); }
+        .tl-desc { font-size: 1.1rem; line-height: 1.7; color: #5d6e7f; }
+
+        /* 目录 */
+        .toc { list-style: none; width: 100%; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 18px;
+            background: rgba(255,255,255,0.28);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 18px;
+            padding: 16px 24px;
+            margin-bottom: 14px;
+        }
+        .toc li::before { content: none; }
+        .toc .no { font-size: 1.5rem; font-weight: 700; color: #4b6cb7; font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.35rem; font-weight: 700; color: var(--primary-text); }
+        .toc .d { margin-left: auto; font-size: 1.05rem; color: #6a7b8c; }
+
+        /* 封面 / 结尾专属 */
+        .pill {
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid var(--glass-border);
+            font-size: .95rem;
+            letter-spacing: .24em;
+            color: #4b6cb7;
+            margin-bottom: 26px;
+            align-self: flex-start;
+        }
+        .cover-foot {
+            width: 100%;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(44,62,80,.16);
+            display: flex;
+            gap: 36px;
+            font-size: 1.05rem;
+            color: #6a7b8c;
+        }
+
+        /* 控制按钮 */
+        .controls {
+            position: fixed;
+            bottom: 28px;
+            right: 44px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10;
+        }
+        .controls button {
+            padding: 12px 25px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--primary-text);
+            transition: all 0.3s;
+        }
+        .controls button:hover {
+            background: rgba(255, 255, 255, 0.55);
+            transform: translateY(-2px);
+        }
+        .counter { font-size: 1rem; color: #55647a; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+
+        .hint {
+            position: fixed;
+            bottom: 34px;
+            left: 44px;
+            font-size: .9rem;
+            color: rgba(44, 62, 80, 0.55);
+            letter-spacing: .1em;
+            z-index: 10;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 5px;
+            background: var(--accent-color);
+            transition: width 0.3s ease;
+            z-index: 20;
+        }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } p, li { font-size: 1.15rem; }
+            .grid-3, .timeline { grid-template-columns: 1fr; gap: 14px; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .presentation-container { width: 92vw; height: 88vh; }
+            .toc .d { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            body::before { animation: none; }
+            .slide.active { animation: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressFill"></div>
+
+    <div class="presentation-container">
+
+        <!-- 1 封面 -->
+        <section class="slide active">
+            <div class="pill">PRODUCT LAUNCH · 2026</div>
+            <h1>栖居</h1>
+            <p>让家读懂你的生活节奏 —— 一套以「感知 — 理解 — 回应」为核心的新一代智能家居应用，今天正式与大家见面。</p>
+            <p style="font-size: 1.05rem; color: #667; margin-bottom: 0;">栖居产品团队 · 林可&nbsp;&nbsp;&nbsp;&nbsp;2026 年 3 月 26 日</p>
+        </section>
+
+        <!-- 2 目录 -->
+        <section class="slide">
+            <h2>今天讲四件事</h2>
+            <ul class="toc">
+                <li><span class="no">01</span><span class="t">洞察</span><span class="d">被割裂的居家体验</span></li>
+                <li><span class="no">02</span><span class="t">方案</span><span class="d">栖居的核心理念</span></li>
+                <li><span class="no">03</span><span class="t">验证</span><span class="d">内测数据与对比</span></li>
+                <li><span class="no">04</span><span class="t">路线</span><span class="d">落地节奏与隐私设计</span></li>
+            </ul>
+        </section>
+
+        <!-- 3 背景 -->
+        <section class="slide">
+            <div class="kicker">01 · 洞察</div>
+            <h2>智能家居，为什么不智能</h2>
+            <ul>
+                <li><span><b>控制割裂：</b>灯光、窗帘、空调各自为政，五个 App 管一个家。</span></li>
+                <li><span><b>场景僵硬：</b>「回家模式」永远在错误的时间被触发。</span></li>
+                <li><span><b>学习成本高：</b>长辈记不住步骤，最终沦为摆设。</span></li>
+                <li><span><b>隐私焦虑：</b>家庭数据上传云端，用户始终不放心。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">我们访谈了 76 个家庭：83% 的智能设备在安装三个月后被闲置。问题不在硬件，而在「家没有读懂人」。</div>
+        </section>
+
+        <!-- 4 核心理念 -->
+        <section class="slide">
+            <div class="kicker">02 · 方案</div>
+            <h2>从「被动执行」到「主动理解」</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="kicker" style="margin-bottom: 8px;">感知</div>
+                    <p style="margin-bottom: 0; max-width: none;">毫米波雷达与光照传感器协同，无摄像头地感知在室人数、活动区域与作息变化，只在本地完成计算。</p>
+                </div>
+                <div class="card">
+                    <div class="kicker" style="margin-bottom: 8px;">回应</div>
+                    <p style="margin-bottom: 0; max-width: none;">把 23 类设备动作收敛成 6 个生活场景：晨起、离家、阅读、观影、会客、入眠，一句话即可切换。</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 22px;">设计准则：不新增任何 App，不要求任何手动编排——栖居在两周内自己学会这个家的习惯。</div>
+        </section>
+
+        <!-- 5 关键数据 -->
+        <section class="slide">
+            <div class="kicker">03 · 验证</div>
+            <h2>328 户内测家庭交出的答卷</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="stat-num">92.4%</div>
+                    <div class="stat-label">场景触发准确率</div>
+                    <div class="stat-note">第八周数据，首周为 71%</div>
+                    <div class="stat-progress"><span style="width: 92.4%;"></span></div>
+                </div>
+                <div class="card">
+                    <div class="stat-num">11.6 次</div>
+                    <div class="stat-label">日均自动场景执行</div>
+                    <div class="stat-note">手动控制下降 64%</div>
+                </div>
+                <div class="card">
+                    <div class="stat-num">14 天</div>
+                    <div class="stat-label">习惯建模收敛周期</div>
+                    <div class="stat-note">比行业平均快一倍</div>
+                </div>
+            </div>
+            <p style="margin-top: 22px; margin-bottom: 0;">内测家庭中 89% 在一个月后仍保持活跃使用——而行业基准只有 37%。</p>
+        </section>
+
+        <!-- 6 对比 -->
+        <section class="slide">
+            <div class="kicker">03 · 验证</div>
+            <h2>与传统方案的差别在哪</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>维度</th><th>传统智能家居</th><th>栖居</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>交互方式</td><td>打开 App 逐个点选</td><td>场景自动流转，语音一句切换</td></tr>
+                    <tr><td>规则配置</td><td>手动编写 IF-THEN</td><td>端侧建模，无需配置</td></tr>
+                    <tr><td>数据去向</td><td>云端存储与分析</td><td>本地网关闭环，不出户</td></tr>
+                    <tr><td>老人适配</td><td>需子女远程代管</td><td>零学习成本，无感使用</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 7 实施路径 -->
+        <section class="slide">
+            <div class="kicker">04 · 路线</div>
+            <h2>三步走进「会思考的家」</h2>
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-phase">WEEK 1</div>
+                    <div class="tl-name">无感部署</div>
+                    <div class="tl-desc">网关通电即接入，存量设备自动发现配对，平均 26 分钟完成全屋接入。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">WEEK 2 - 3</div>
+                    <div class="tl-name">习惯建模</div>
+                    <div class="tl-desc">端侧模型学习作息与偏好，每天生成一份「家的理解报告」供住户校准。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">WEEK 4+</div>
+                    <div class="tl-name">场景自进化</div>
+                    <div class="tl-desc">按季节与生活变化持续微调，换季、加班、访客等变化无需重新设置。</div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 24px;">4 月起面向首批 1,000 个家庭开放预约，5 月登陆主流应用商店。</div>
+        </section>
+
+        <!-- 8 深入细节 -->
+        <section class="slide">
+            <div class="kicker">04 · 路线</div>
+            <h2>隐私不是卖点，是底线</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">本地网关</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">全部感知数据在网关内完成推理，原始数据 72 小时后自动滚动清除。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">端侧计算</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">模型推理全程离线运行，断网 30 天，家依然懂得你的节律。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: 6px;">数据沙盒</div>
+                    <p style="font-size: 1.08rem; margin-bottom: 0;">第三方接入只能读取匿名化摘要，随时一键撤回全部授权。</p>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 24px;">已通过国家级信息安全三级等保认证，隐私政策全文公开可审计。</div>
+        </section>
+
+        <!-- 9 成果与展望 -->
+        <section class="slide">
+            <div class="kicker">04 · 路线</div>
+            <h2>发布之后，我们走向哪里</h2>
+            <ul>
+                <li><span><b>2026 Q2：</b>完成 1,000 家庭公测，上线社区共享场景市集。</span></li>
+                <li><span><b>2026 Q3：</b>开放端侧模型微调接口，硬件伙伴可深度定制。</span></li>
+                <li><span><b>2026 Q4：</b>推出适老化版本「栖居·伴」，联动社区养老服务。</span></li>
+                <li><span><b>长期愿景：</b>让「家」成为有记忆、有分寸的生活伙伴。</span></li>
+            </ul>
+            <div class="note" style="margin-top: 18px;">目标：到 2027 年底，服务 100 万个家庭，把「智能」变回「体贴」。</div>
+        </section>
+
+        <!-- 10 结尾 -->
+        <section class="slide">
+            <div class="kicker">THANK YOU</div>
+            <h1>把家还给生活</h1>
+            <p>栖居现已开启预约，欢迎到展台体验实景样板间。</p>
+            <div class="cover-foot">
+                <span>预约：qiju.app/early</span>
+                <span>合作：hello@qiju.app</span>
+                <span>微信公众号：栖居智能</span>
+            </div>
+        </section>
+
+    </div>
+
+    <div class="controls">
+        <button data-action="prev">上一页</button>
+        <span class="counter" id="pageCounter">1 / 10</span>
+        <button data-action="next">下一页</button>
+    </div>
+    <div class="hint">← → 翻页 · F 全屏</div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

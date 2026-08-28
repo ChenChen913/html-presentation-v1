@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阳台菜园计划 — 自然生机模板</title>
+    <style>
+        :root {
+            --color-leaf: #dcfce7;
+            --color-sky: #e0f2fe;
+            --color-sun: #fef9c3;
+            --color-bloom: #ffedd5;
+            --accent-green: #86efac;
+            --accent-blue: #93c5fd;
+            --text-main: #365243;
+            --text-sub: #5f7266;
+            --glass-glow: rgba(255, 255, 255, 0.45);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            background: #ffffff;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        /* 四色柔光斑背景 */
+        .bg-glow { position: fixed; inset: 0; z-index: -1; overflow: hidden; }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: .8;
+            animation: pulse-move 20s infinite alternate ease-in-out;
+        }
+        .b1 { width: 60vw; height: 60vw; background: var(--color-leaf); top: -20%; left: -10%; }
+        .b2 { width: 50vw; height: 50vw; background: var(--color-sky); bottom: -10%; right: -5%; animation-delay: -5s; }
+        .b3 { width: 45vw; height: 45vw; background: var(--color-sun); top: 20%; left: 30%; animation-delay: -10s; }
+        .b4 { width: 40vw; height: 40vw; background: var(--color-bloom); bottom: 10%; left: 10%; animation-delay: -15s; }
+        @keyframes pulse-move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(60px, 40px) scale(1.12); }
+        }
+
+        /* 舞台 */
+        .stage {
+            width: 86vw;
+            height: 84vh;
+            background: var(--glass-glow);
+            backdrop-filter: blur(35px) saturate(120%);
+            -webkit-backdrop-filter: blur(35px) saturate(120%);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(54, 82, 67, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: clamp(2rem, 5vh, 3.4rem) clamp(2.4rem, 4.5vw, 4rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(24px);
+            transition: opacity .7s ease, transform .7s ease, visibility 0s linear .7s;
+        }
+        .slide.active {
+            opacity: 1; visibility: visible; transform: none;
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+        /* 排版 */
+        .kicker {
+            font-size: 1.08rem;
+            letter-spacing: .28em;
+            color: #4d8a63;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        h1 {
+            font-size: 4rem;
+            font-weight: 600;
+            line-height: 1.28;
+            color: #1a2e28;
+        }
+        /* 装饰性标题横线（原版签名元素） */
+        .title-line {
+            width: 100px;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            margin: clamp(.65rem, 1.6vh, 1rem) 0 clamp(.8rem, 2vh, 1.2rem);
+        }
+        h2 {
+            font-size: 4rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.3;
+            margin-bottom: clamp(1.1rem, 3vh, 1.8rem);
+        }
+        .lede {
+            font-size: 1.6rem;
+            line-height: 1.85;
+            color: var(--text-sub);
+            max-width: 860px;
+        }
+
+        .bullet { list-style: none; margin-top: .4rem; }
+        .bullet li {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            line-height: 1.75;
+            color: #4d5f54;
+        }
+        .bullet li::before {
+            content: "";
+            position: absolute;
+            left: .1rem; top: .58em;
+            width: 12px; height: 12px;
+            border-radius: 50% 50% 50% 2px;
+            background: var(--accent-green);
+            transform: rotate(-45deg);
+        }
+        .bullet li b { color: var(--text-main); }
+
+        /* 卡片 */
+        .card {
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 1.35rem 1.55rem;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.3rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.3rem; }
+
+        .veg-head { display: flex; align-items: center; gap: .8rem; margin-bottom: .6rem; color: #3f9159; }
+        .veg-head svg { width: 34px; height: 34px; }
+        .veg-name { font-size: 1.45rem; font-weight: 700; color: var(--text-main); }
+        .veg-desc { font-size: 1.14rem; line-height: 1.7; color: #5f7266; }
+
+        .stat-num {
+            font-size: 2.9rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #4d8a63, #3f83b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+            font-variant-numeric: tabular-nums;
+        }
+        .stat-label { margin-top: .5rem; font-size: 1.2rem; color: var(--text-main); font-weight: 600; }
+        .stat-note { margin-top: .25rem; font-size: .98rem; color: #7f8f84; }
+
+        .note {
+            background: rgba(134, 239, 172, 0.18);
+            border-left: 4px solid var(--accent-green);
+            border-radius: 0 14px 14px 0;
+            padding: .95rem 1.3rem;
+            font-size: 1.15rem;
+            line-height: 1.75;
+            color: #46604f;
+            margin-top: 1.3rem;
+            max-width: 920px;
+        }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: .85rem 1rem;
+            text-align: left;
+            font-size: 1.16rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(54, 82, 67, 0.12);
+        }
+        .table th { color: var(--text-main); font-weight: 700; border-bottom: 2px solid var(--accent-green); }
+        .table td:first-child { font-weight: 600; color: var(--text-main); }
+        .table td { color: #4d5f54; }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.7rem; position: relative; margin-top: .5rem; }
+        .timeline::before { content: ""; position: absolute; top: 9px; left: 3%; right: 3%; height: 2px; background: linear-gradient(90deg, var(--accent-green), var(--accent-blue)); opacity: .55; }
+        .tl-step { position: relative; padding-top: 2.1rem; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 4px solid var(--accent-green); }
+        .tl-phase { font-size: .9rem; color: #3f9159; letter-spacing: .14em; margin-bottom: .25rem; font-weight: 600; }
+        .tl-name { font-size: 1.3rem; font-weight: 700; margin-bottom: .45rem; color: var(--text-main); }
+        .tl-desc { font-size: 1.08rem; line-height: 1.7; color: #5f7266; }
+
+        /* 目录 */
+        .toc { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-top: .3rem; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 1rem;
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 1rem 1.4rem;
+        }
+        .toc .no { font-size: 1.35rem; font-weight: 700; color: #3f9159; font-variant-numeric: tabular-nums; }
+        .toc .t { font-size: 1.26rem; font-weight: 700; color: var(--text-main); }
+        .toc .d { margin-left: auto; font-size: .98rem; color: #7f8f84; }
+
+        /* 封面 / 结尾 */
+        .pill {
+            display: inline-block;
+            padding: .45rem 1.3rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            font-size: .9rem;
+            letter-spacing: .22em;
+            color: #3f9159;
+            align-self: flex-start;
+        }
+        .cover-foot {
+            margin-top: 2.2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(54,82,67,.16);
+            display: flex;
+            gap: 2.6rem;
+            font-size: 1.05rem;
+            color: #7f8f84;
+        }
+
+        /* 控制 */
+        .controls {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 74px;
+            padding: 0 clamp(2.4rem, 4.5vw, 4rem);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .hint { font-size: .92rem; color: rgba(54, 82, 67, 0.55); letter-spacing: .1em; }
+        .nav-right { display: flex; align-items: center; gap: 14px; }
+        .page-indicator { font-size: 1rem; color: #46604f; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            padding: .6rem 1.5rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: .98rem;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all .3s;
+        }
+        .nav-btn:hover { background: var(--accent-green); color: #1f3d2b; transform: translateY(-2px); }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 2.5rem; } h2 { font-size: 2.4rem; } .lede, .bullet li { font-size: 1.2rem; }
+            .grid-2, .grid-3, .timeline, .toc { grid-template-columns: 1fr; gap: .9rem; }
+            .stage { width: 94vw; height: 92vh; }
+            .toc .d { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .blob { animation: none; }
+            .slide { transition: opacity .3s ease; transform: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow">
+        <div class="blob b1"></div>
+        <div class="blob b2"></div>
+        <div class="blob b3"></div>
+        <div class="blob b4"></div>
+    </div>
+
+    <div class="stage">
+
+        <!-- 1 封面 -->
+        <section class="slide active">
+            <div style="max-width: 80%;">
+                <span class="pill">社区营造分享 · SPRING 2026</span>
+                <h1 style="margin-top: 1.4rem;">在六平米阳台，种出一个春天</h1>
+                <div class="title-line"></div>
+                <p class="lede" style="margin-top: 0;">阳台菜园计划 · 一份写给都市人的种植指南</p>
+            </div>
+            <div class="cover-foot">
+                <span>分享人 · 梁小满</span>
+                <span>2026 年 4 月</span>
+            </div>
+        </section>
+
+        <!-- 2 目录 -->
+        <section class="slide">
+            <div class="kicker">AGENDA</div>
+            <h2>从一颗种子到一群邻居</h2>
+            <div class="title-line"></div>
+            <ul class="toc">
+                <li><span class="no">01</span><span class="t">为什么开始</span><span class="d">城市与餐桌的距离</span></li>
+                <li><span class="no">02</span><span class="t">新手品种清单</span><span class="d">先种得活，再种得好</span></li>
+                <li><span class="no">03</span><span class="t">四季时刻表</span><span class="d">全年轮种与周末节奏</span></li>
+                <li><span class="no">04</span><span class="t">收成、成本与下一步</span><span class="d">用数据说话</span></li>
+            </ul>
+        </section>
+
+        <!-- 3 为什么开始 -->
+        <section class="slide">
+            <div class="kicker">01 · 为什么开始</div>
+            <h2>我们为什么开始种菜</h2>
+            <div class="title-line"></div>
+            <ul class="bullet">
+                <li><span><b>新鲜难留：</b>超市绿叶菜撑不过三天，买得越多浪费越多。</span></li>
+                <li><span><b>认知断层：</b>孩子一度以为土豆长在树上。</span></li>
+                <li><span><b>空间闲置：</b>阳台是城市最被低估的耕地。</span></li>
+                <li><span><b>自然教育：</b>种菜是门槛最低的自然教育。</span></li>
+            </ul>
+            <div class="note">本计划的全部数据来自 40 个家庭的种植日志。</div>
+        </section>
+
+        <!-- 4 新手品种清单 -->
+        <section class="slide">
+            <div class="kicker">02 · 新手品种清单</div>
+            <h2>四种「种不死」的作物</h2>
+            <div class="title-line"></div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="veg-head">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 20h16"/><path d="M7 20v-7"/><path d="M12 20V4"/><path d="M17 20v-8"/></svg>
+                        <span class="veg-name">小葱</span>
+                    </div>
+                    <p class="veg-desc">水培 7 天一茬，失败率几乎为零。</p>
+                </div>
+                <div class="card">
+                    <div class="veg-head">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M6.5 16.5a5.5 5.5 0 0 1 11 0"/><path d="M9 19.5a3 3 0 0 1 6 0"/></svg>
+                        <span class="veg-name">生菜</span>
+                    </div>
+                    <p class="veg-desc">30 天采收，耐半阴好养。</p>
+                </div>
+                <div class="card">
+                    <div class="veg-head">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13.5" r="5"/><path d="M12 18.5v3"/><path d="M12 8.5C12 5.5 10 3.8 7.8 3.8c0 3 2 4.7 4.2 4.7Z"/><path d="M12 8.5c0-3 2-4.7 4.2-4.7 0 3-2 4.7-4.2 4.7Z"/></svg>
+                        <span class="veg-name">樱桃萝卜</span>
+                    </div>
+                    <p class="veg-desc">25 天可见成果，颜值担当。</p>
+                </div>
+                <div class="card">
+                    <div class="veg-head">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21v-8"/><path d="M12 13C8.5 13 6 10.5 6 7c3.5 0 6 2.5 6 6Z"/><path d="M12 13c3.5 0 6-2.5 6-6-3.5 0-6 2.5-6 6Z"/></svg>
+                        <span class="veg-name">薄荷</span>
+                    </div>
+                    <p class="veg-desc">多年生，泡水做菜两相宜。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5 种植账本 -->
+        <section class="slide">
+            <div class="kicker">种植账本 · 半年数据</div>
+            <h2>一本种出来的账</h2>
+            <div class="title-line"></div>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="stat-num">12 种</div>
+                    <div class="stat-label">全年可轮种品种</div>
+                    <div class="stat-note">四季接力，不断茬</div>
+                </div>
+                <div class="card">
+                    <div class="stat-num">9.6kg</div>
+                    <div class="stat-label">半年累计收成</div>
+                    <div class="stat-note">40 户家庭合计</div>
+                </div>
+                <div class="card">
+                    <div class="stat-num">-35%</div>
+                    <div class="stat-label">蔬菜开支降幅</div>
+                    <div class="stat-note">对照去年同期</div>
+                </div>
+            </div>
+            <p class="lede" style="margin-top: 1.3rem; margin-bottom: 0;">平均每天投入 6 分钟，比刷短视频的时间零头还少。</p>
+        </section>
+
+        <!-- 6 四季时刻表 -->
+        <section class="slide">
+            <div class="kicker">03 · 四季时刻表</div>
+            <h2>什么时候种什么</h2>
+            <div class="title-line"></div>
+            <table class="table">
+                <thead>
+                    <tr><th>季节</th><th>推荐品种</th><th>采收期</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>春</td><td>樱桃萝卜 · 生菜 · 小葱</td><td>4-6 月</td></tr>
+                    <tr><td>夏</td><td>空心菜 · 苋菜 · 罗勒</td><td>6-9 月</td></tr>
+                    <tr><td>秋</td><td>菠菜 · 茼蒿 · 小白菜</td><td>10-12 月</td></tr>
+                    <tr><td>冬</td><td>蒜苗 · 乌塌菜 · 迷迭香</td><td>12-2 月</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 7 周末两小时 -->
+        <section class="slide">
+            <div class="kicker">03 · 周末节奏</div>
+            <h2>周末两小时这样做</h2>
+            <div class="title-line"></div>
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-phase">STEP 01</div>
+                    <div class="tl-name">检查与浇水</div>
+                    <div class="tl-desc">清晨 5 分钟，手指探土再决定。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">STEP 02</div>
+                    <div class="tl-name">松土与追肥</div>
+                    <div class="tl-desc">每月一次，稀释淘米水即可。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-phase">STEP 03</div>
+                    <div class="tl-name">采收与补种</div>
+                    <div class="tl-desc">吃多少拔多少，空盆随收随种。</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8 省水三招 -->
+        <section class="slide">
+            <div class="kicker">03 · 省水妙招</div>
+            <h2>省水三招</h2>
+            <div class="title-line"></div>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: .4rem;">滴灌瓶</div>
+                    <p class="veg-desc">矿泉水瓶倒插土面，一周省水一半。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: .4rem;">覆盖</div>
+                    <p class="veg-desc">碎树皮盖住表土，蒸发减半。</p>
+                </div>
+                <div class="card">
+                    <div class="tl-name" style="margin-bottom: .4rem;">接雨水</div>
+                    <p class="veg-desc">阳台水桶接雨，浇菜正合适。</p>
+                </div>
+            </div>
+            <div class="note">三招叠加，盛夏一周只需补两次水。</div>
+        </section>
+
+        <!-- 9 下一步 -->
+        <section class="slide">
+            <div class="kicker">04 · 下一步</div>
+            <h2>从一个阳台到一群阳台</h2>
+            <div class="title-line"></div>
+            <ul class="bullet">
+                <li><span><b>工具化：</b>把时刻表做成小程序提醒。</span></li>
+                <li><span><b>共建：</b>与物业谈屋顶共建园。</span></li>
+                <li><span><b>开放：</b>秋季开放日请邻居来摘。</span></li>
+                <li><span><b>愿景：</b>100 个阳台连成「空中菜园」。</span></li>
+            </ul>
+        </section>
+
+        <!-- 10 结尾 -->
+        <section class="slide">
+            <div style="max-width: 82%;">
+                <div class="kicker">THANKS</div>
+                <h1 style="font-size: 2.9rem;">种下去的是菜，长出来的是生活。</h1>
+                <div class="title-line"></div>
+                <p class="lede" style="margin-top: 0;">欢迎带着问题来交流，也欢迎带着种子回家。</p>
+            </div>
+            <div class="cover-foot">
+                <span>交流群 · 阳台菜园计划 3 群</span>
+                <span>梁小满</span>
+            </div>
+        </section>
+
+        <!-- 底部控制 -->
+        <div class="controls">
+            <span class="hint">← → 翻页 · F 全屏</span>
+            <div class="nav-right">
+                <span class="page-indicator" id="pageCounter">1 / 10</span>
+                <button class="nav-btn" data-action="prev">上一页</button>
+                <button class="nav-btn" data-action="next">下一页</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>

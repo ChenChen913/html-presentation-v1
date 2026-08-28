@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代 CSS 布局技术 — 代码旗舰模板</title>
+    <style>
+        :root {
+            --bg-color: #f6f8fb;
+            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            --card-bg: rgba(255, 255, 255, 0.45);
+            --text-main: #2c3e50;
+            --text-sub: #5c6e80;
+            --accent: #78a2d4;
+            --accent-soft: rgba(120, 162, 212, 0.18);
+            --highlight: #ffeaa7;
+            --code-bg: #1c2431;
+            --tk-com: #7c8ba1;
+            --tk-sel: #93c2fa;
+            --tk-prp: #d5e3f7;
+            --tk-val: #f2cf9b;
+            --tk-str: #a4cdee;
+            --tk-at: #f2cf9b;
+        }
+        [data-theme="dark"] {
+            --bg-color: #12151a;
+            --glass-bg: rgba(20, 25, 30, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --text-main: #e2e8f0;
+            --text-sub: #a0aec0;
+            --accent: #90b8f8;
+            --accent-soft: rgba(144, 184, 248, 0.16);
+            --highlight: #b98e10;
+            --code-bg: #161c26;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", serif;
+            color: var(--text-main);
+            background-color: var(--bg-color);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color .4s ease, color .4s ease;
+        }
+
+        /* 舞台 */
+        .stage {
+            width: 94vw;
+            height: 90vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            box-shadow: var(--glass-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: background .4s ease;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            padding: clamp(2rem, 5vh, 3.2rem) clamp(2.4rem, 4.8vw, 4.4rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(22px);
+            transition: opacity .6s ease, transform .6s ease, visibility 0s linear .6s;
+        }
+        .slide.active {
+            opacity: 1; visibility: visible; transform: none;
+            transition: opacity .6s ease, transform .6s ease;
+        }
+
+        /* ==================== 排版 ==================== */
+        .kicker {
+            font-size: 1.1rem;
+            letter-spacing: .26em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 3.8rem;
+            margin-bottom: .6rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: clamp(1rem, 2.8vh, 1.7rem);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        h2::before {
+            content: "";
+            width: 10px; height: 1.9rem;
+            border-radius: 5px;
+            background: linear-gradient(to bottom, var(--accent), rgba(161, 196, 253, .6));
+            flex-shrink: 0;
+        }
+        .lede {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            color: var(--text-sub);
+        }
+        p { font-size: 1.25rem; line-height: 1.8; color: var(--text-sub); }
+
+        code, .mono { font-family: "Fira Code", "Sarasa Mono SC", ui-monospace, Consolas, monospace; }
+        code.inline {
+            background: var(--accent-soft);
+            color: var(--text-main);
+            padding: .1em .45em;
+            border-radius: 6px;
+            font-size: .92em;
+        }
+
+        /* 高亮标记（原版特色） */
+        .highlight { background: var(--highlight); color: #1a1a1a; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
+
+        /* 徽章（渐变） */
+        .pill {
+            display: inline-block;
+            font-size: .95rem;
+            padding: .45rem 1.3rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #78a2d4, #a1c4fd);
+            color: #fff;
+            letter-spacing: .14em;
+            align-self: flex-start;
+        }
+        [data-theme="dark"] .pill { background: linear-gradient(135deg, #5f8ecb, #7ea6e8); }
+
+        /* 引用块 */
+        .quote-block {
+            border-left: 6px solid var(--accent);
+            padding: 1.1rem 1.6rem;
+            margin: 1.2rem 0;
+            font-style: italic;
+            background: linear-gradient(90deg, rgba(120, 162, 212, 0.12) 0%, transparent 100%);
+            border-radius: 0 16px 16px 0;
+            font-size: 1.35rem;
+            line-height: 1.75;
+            color: var(--text-main);
+            max-width: 700px;
+        }
+
+        /* 列表 */
+        .bullet { list-style: none; }
+        .bullet li {
+            font-size: 1.25rem;
+            line-height: 1.75;
+            margin-bottom: .85rem;
+            padding-left: 1.7rem;
+            position: relative;
+            color: var(--text-sub);
+        }
+        .bullet li::before {
+            content: "";
+            position: absolute;
+            left: .1rem; top: .66em;
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        /* 卡片 */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.4rem 1.6rem;
+        }
+        .stat-num {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            font-family: "Fira Code", "Sarasa Mono SC", ui-monospace, Consolas, monospace;
+            line-height: 1.2;
+        }
+        .stat-label { margin-top: .5rem; font-size: 1.2rem; color: var(--text-main); font-weight: 600; }
+        .stat-note { margin-top: .25rem; font-size: 1rem; color: var(--text-sub); }
+
+        .note {
+            background: var(--accent-soft);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 14px 14px 0;
+            padding: .95rem 1.3rem;
+            font-size: 1.2rem;
+            line-height: 1.7;
+            color: var(--text-main);
+            margin-top: 1.3rem;
+        }
+
+        /* 表格 */
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td {
+            padding: .85rem 1rem;
+            text-align: left;
+            font-size: 1.18rem;
+            line-height: 1.55;
+            border-bottom: 1px solid rgba(120, 140, 170, 0.18);
+        }
+        .table th { color: var(--text-main); font-weight: 700; border-bottom: 2px solid var(--accent); }
+        .table td:first-child { font-weight: 600; color: var(--text-main); font-family: "Fira Code", ui-monospace, Consolas, monospace; font-size: .95em; }
+        .table td { color: var(--text-sub); }
+
+        /* 时间线 */
+        .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4rem; position: relative; margin-top: .4rem; }
+        .timeline::before { content: ""; position: absolute; top: 9px; left: 3%; right: 3%; height: 2px; background: var(--accent); opacity: .35; }
+        .tl-step { position: relative; padding-top: 2.1rem; }
+        .tl-step::before { content: ""; position: absolute; top: 0; left: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--bg-color); border: 4px solid var(--accent); }
+        .tl-era { font-size: .92rem; color: var(--accent); letter-spacing: .1em; margin-bottom: .3rem; font-family: "Fira Code", ui-monospace, Consolas, monospace; }
+        .tl-name { font-size: 1.35rem; font-weight: 700; margin-bottom: .45rem; color: var(--text-main); }
+        .tl-desc { font-size: 1.08rem; line-height: 1.7; color: var(--text-sub); }
+
+        /* 目录 */
+        .toc { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+        .toc li {
+            display: flex; align-items: baseline; gap: 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.05rem 1.4rem;
+        }
+        .toc .no { font-size: 1.35rem; font-weight: 700; color: var(--accent); font-family: "Fira Code", ui-monospace, Consolas, monospace; }
+        .toc .t { font-size: 1.28rem; font-weight: 700; color: var(--text-main); }
+        .toc .d { margin-left: auto; font-size: .98rem; color: var(--text-sub); }
+
+        /* 代码块（双主题均为深底） */
+        .codeblock {
+            background: var(--code-bg);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: background .4s ease;
+        }
+        .codeblock pre {
+            font-family: "Fira Code", "Sarasa Mono SC", ui-monospace, Consolas, monospace;
+            font-size: 1.1rem;
+            line-height: 1.65;
+            color: #d5e3f7;
+            white-space: pre;
+        }
+        .codeblock::-webkit-scrollbar { height: 8px; }
+        .codeblock::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+        .win { color: var(--tk-com); font-style: italic; }
+        .sel { color: var(--tk-sel); }
+        .prp { color: var(--tk-prp); }
+        .val { color: var(--tk-val); }
+        .str { color: var(--tk-str); }
+        .atk { color: var(--tk-at); }
+
+        /* 图表 */
+        .chart-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.2rem 1.4rem;
+        }
+        .chart-card svg { width: 100%; height: auto; display: block; }
+        .chart-title { font-size: 1.1rem; color: var(--text-sub); margin-bottom: .6rem; }
+
+        /* 环形图（还原原版 doughnut 图表） */
+        .donut-wrap { display: flex; align-items: center; gap: 1.1rem; }
+        .donut-wrap svg { width: 118px; flex: none; }
+        .donut-legend { list-style: none; margin: 0; padding: 0; flex: 1; }
+        .donut-legend li { display: flex; align-items: center; gap: .5rem; font-size: 1rem; color: var(--text-sub); padding: .3rem 0; }
+        .donut-legend i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+        .donut-legend b { margin-left: auto; color: var(--text-main); font-variant-numeric: tabular-nums; }
+        .donut-center { fill: var(--text-main); font-size: 21px; font-weight: 700; }
+        .donut-sub { fill: var(--text-sub); font-size: 11px; }
+
+        /* 封面页脚 */
+        .foot {
+            margin-top: 2.2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(120, 140, 170, 0.25);
+            display: flex;
+            gap: 2.4rem;
+            font-size: 1.05rem;
+            color: var(--text-sub);
+        }
+
+        /* ==================== 控制 ==================== */
+        .progress-bar {
+            position: absolute;
+            top: 0; left: 0;
+            height: 4px;
+            background: linear-gradient(to right, #78a2d4, #a1c4fd);
+            transition: width .35s ease;
+            z-index: 20;
+        }
+        .controls {
+            position: absolute;
+            bottom: 20px; right: 26px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            z-index: 20;
+        }
+        .btn-icon {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: 0.3s;
+            font-size: 1.25rem;
+        }
+        .btn-icon:hover { background: var(--accent); color: #fff; }
+        .btn-icon svg { width: 20px; height: 20px; }
+        .page-num {
+            font-family: "Fira Code", ui-monospace, Consolas, monospace;
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            margin: 0 8px;
+        }
+        .hint {
+            position: absolute;
+            bottom: 30px; left: 30px;
+            font-size: .9rem;
+            color: var(--text-sub);
+            opacity: .65;
+            letter-spacing: .1em;
+            z-index: 20;
+        }
+
+        @media (max-width: 900px) {
+            h1 { font-size: 2.4rem; } h2 { font-size: 1.8rem; } p, .bullet li { font-size: 1.1rem; }
+            .grid-2, .toc { grid-template-columns: 1fr; gap: 1rem; }
+            .timeline { grid-template-columns: 1fr 1fr; gap: 1rem; }
+            .stage { width: 96vw; height: 93vh; }
+            .toc .d { display: none; }
+            .hint { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide { transition: opacity .3s ease; transform: none; }
+            body, .stage, .codeblock { transition: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stage">
+        <div class="progress-bar" id="progressFill"></div>
+
+        <button class="btn-icon" id="themeToggle" aria-label="切换明暗主题" style="position:absolute; top:22px; right:26px; z-index:20;">
+            <svg id="iconSun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+            <svg id="iconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z"/></svg>
+        </button>
+
+        <!-- 1 封面 -->
+        <section class="slide active">
+            <div style="max-width: 82%;">
+                <span class="pill">CSS DAY · 2026</span>
+                <h1 contenteditable="true" spellcheck="false" style="margin-top: 1.3rem;">现代 CSS 布局技术</h1>
+                <p class="lede" style="margin-top: 1rem;">Flexbox · Grid · 容器查询：一次讲透现代布局的三台引擎</p>
+                <p class="lede" style="margin-top: .4rem;">从 float 时代一路走来，看布局如何一步步「回归自然」。</p>
+            </div>
+            <div class="foot">
+                <span>前端工程组 · 袁野</span>
+                <span>2026 年 3 月</span>
+                <span>时长 30 min</span>
+            </div>
+        </section>
+
+        <!-- 2 目录 -->
+        <section class="slide">
+            <div class="kicker">AGENDA</div>
+            <h2>今天聊四件事</h2>
+            <ul class="toc">
+                <li><span class="no">01</span><span class="t">布局简史</span><span class="d">我们从哪里来</span></li>
+                <li><span class="no">02</span><span class="t">Flexbox 回顾</span><span class="d">一维布局的正确姿势</span></li>
+                <li><span class="no">03</span><span class="t">Grid 实战</span><span class="d">二维布局的原生答案</span></li>
+                <li><span class="no">04</span><span class="t">响应式新范式</span><span class="d">容器查询与选型建议</span></li>
+            </ul>
+        </section>
+
+        <!-- 3 布局简史 -->
+        <section class="slide">
+            <div class="kicker">01 · 布局简史</div>
+            <h2>布局这二十年，走了多远</h2>
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-era">2004-2012</div>
+                    <div class="tl-name">float 时代</div>
+                    <div class="tl-desc">用文字环绕实现分栏，清除浮动成为必修 hack。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-era">2012-2017</div>
+                    <div class="tl-name">Flexbox 兴起</div>
+                    <div class="tl-desc">一维排列终于原生，垂直居中不再是玄学。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-era">2017-2023</div>
+                    <div class="tl-name">Grid 落地</div>
+                    <div class="tl-desc">行与列同时规划，页面骨架第一次有了「图纸」。</div>
+                </div>
+                <div class="tl-step">
+                    <div class="tl-era">2023-今</div>
+                    <div class="tl-name">容器查询</div>
+                    <div class="tl-desc">组件按自己容器自适应，响应式进入组件时代。</div>
+                </div>
+            </div>
+            <div class="note">工具的演进方向始终一致：让「画界面」越来越接近「描述意图」。</div>
+        </section>
+
+        <!-- 4 Flexbox 回顾 -->
+        <section class="slide">
+            <div class="kicker">02 · FLEXBOX 回顾</div>
+            <h2>一维布局，四个关键习惯</h2>
+            <ul class="bullet">
+                <li><span>间距交给 <code class="inline">gap</code>，告别 <code class="inline">margin</code> 的负值 hack 与首尾特判。</span></li>
+                <li><span>卡片自适应用 <code class="inline">flex-basis</code> 定基准、<code class="inline">flex-grow</code> 分剩余。</span></li>
+                <li><span>基线对齐用 <code class="inline">align-items: baseline</code>，图文混排不再手调。</span></li>
+                <li><span>水平居中用 <code class="inline">margin-inline: auto</code>，语义清晰无副作用。</span></li>
+            </ul>
+            <div class="codeblock" style="margin-top: 1rem;"><pre><span class="win">/* 一行解决：等分 · 可换行 · 有间距 */</span>
+<span class="sel">.cards</span> {
+  <span class="prp">display</span>: <span class="val">flex</span>;
+  <span class="prp">flex-wrap</span>: <span class="val">wrap</span>;
+  <span class="prp">gap</span>: <span class="val">1rem</span>;
+}
+<span class="sel">.cards > .card</span> { <span class="prp">flex</span>: <span class="val">1 1 240px</span>; }</pre></div>
+        </section>
+
+        <!-- 5 Grid 实战 -->
+        <section class="slide">
+            <div class="kicker">03 · GRID 实战</div>
+            <h2>命好名，页面自己会长出来</h2>
+            <div class="grid-2">
+                <div class="codeblock"><pre><span class="sel">.page</span> {
+  <span class="prp">display</span>: <span class="val">grid</span>;
+  <span class="prp">grid-template-areas</span>:
+    <span class="str">"head head"</span>
+    <span class="str">"side main"</span>
+    <span class="str">"foot foot"</span>;
+  <span class="prp">grid-template-columns</span>:
+    <span class="val">220px 1fr</span>;
+  <span class="prp">grid-template-rows</span>:
+    <span class="val">auto 1fr auto</span>;
+}
+<span class="sel">.page > header</span> { <span class="prp">grid-area</span>: <span class="str">head</span>; }
+<span class="sel">.page > aside</span>  { <span class="prp">grid-area</span>: <span class="str">side</span>; }</pre></div>
+                <div style="display: flex; flex-direction: column; gap: 1rem; justify-content: center;">
+                    <p class="lede" style="margin-bottom: 0;">命名区域让布局「所见即所得」：CSS 里的引号图形，就是页面的最终结构。</p>
+                    <ul class="bullet">
+                        <li><span>调整结构只改一处，不再追着媒体查询写覆盖。</span></li>
+                        <li><span>组件用 <code class="inline">grid-area</code> 各就各位，职责一目了然。</span></li>
+                        <li><span>响应式换骨架：小屏重画一次 areas 即可。</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6 响应式新范式 -->
+        <section class="slide">
+            <div class="kicker">04 · 响应式新范式</div>
+            <h2>容器查询：组件自己会响应</h2>
+            <div class="grid-2">
+                <div>
+                    <ul class="bullet" style="margin-bottom: 1rem;">
+                        <li><span>观察单位从「屏幕」变成「容器」，组件放到哪都对。</span></li>
+                        <li><span>同一张卡片，侧栏里紧凑、主区里舒展，一套代码。</span></li>
+                        <li><span>媒体查询退居二线，只管页面级断点。</span></li>
+                    </ul>
+                    <div class="note">迁移口诀：先给容器报名（container-type），再让组件做题（@container）。</div>
+                </div>
+                <div class="codeblock"><pre><span class="win">/* 1. 声明查询容器 */</span>
+<span class="sel">.card-list</span> {
+  <span class="prp">container-type</span>: <span class="val">inline-size</span>;
+}
+<span class="win">/* 2. 组件按容器宽度响应 */</span>
+<span class="atk">@container</span> <span class="val">(min-width: 480px)</span> {
+  <span class="sel">.card</span> {
+    <span class="prp">display</span>: <span class="val">grid</span>;
+    <span class="prp">grid-template-columns</span>: <span class="val">96px 1fr</span>;
+  }
+}</pre></div>
+            </div>
+        </section>
+
+        <!-- 7 数据页 -->
+        <section class="slide">
+            <div class="kicker">04 · 响应式新范式</div>
+            <h2>2026 年 3 月，可以放心用了吗</h2>
+            <div class="grid-2" style="grid-template-columns: 1.5fr 1fr;">
+                <div class="chart-card">
+                    <div class="chart-title">全球浏览器支持率（%）</div>
+                    <svg viewBox="0 0 640 252" role="img" aria-label="四项布局技术的浏览器支持率条形图">
+                        <g font-family="ui-monospace, Consolas, monospace" font-size="15">
+                            <text x="0" y="30" fill="#8494ab">Grid</text>
+                            <rect x="105" y="12" width="480" height="26" rx="7" fill="rgba(120,162,212,0.18)"/>
+                            <rect x="105" y="12" width="472" height="26" rx="7" fill="#78a2d4"/>
+                            <text x="0" y="92" fill="#8494ab">Flexbox</text>
+                            <rect x="105" y="74" width="480" height="26" rx="7" fill="rgba(120,162,212,0.18)"/>
+                            <rect x="105" y="74" width="478" height="26" rx="7" fill="#78a2d4"/>
+                            <text x="0" y="154" fill="#8494ab">容器查询</text>
+                            <rect x="105" y="136" width="480" height="26" rx="7" fill="rgba(120,162,212,0.18)"/>
+                            <rect x="105" y="136" width="442" height="26" rx="7" fill="#78a2d4"/>
+                            <text x="0" y="216" fill="#8494ab">:has()</text>
+                            <rect x="105" y="198" width="480" height="26" rx="7" fill="rgba(120,162,212,0.18)"/>
+                            <rect x="105" y="198" width="426" height="26" rx="7" fill="#78a2d4"/>
+                        </g>
+                        <g font-family="ui-monospace, Consolas, monospace" font-size="15" fill="#5c6e80">
+                            <text x="587" y="30">98.5</text>
+                            <text x="593" y="92">99.8</text>
+                            <text x="557" y="154">92.1</text>
+                            <text x="541" y="216">88.7</text>
+                        </g>
+                    </svg>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="chart-card">
+                        <div class="chart-title">新项目布局方案采用率</div>
+                        <div class="donut-wrap">
+                            <svg viewBox="0 0 120 120" role="img" aria-label="环形图：新项目布局方案采用率，Grid 55%、Flexbox 30%、容器查询 15%">
+                                <g transform="rotate(-90 60 60)" fill="none" stroke-width="16">
+                                    <circle cx="60" cy="60" r="44" stroke="#78a2d4" stroke-dasharray="149 127.46" stroke-dashoffset="0"/>
+                                    <circle cx="60" cy="60" r="44" stroke="#a1c4fd" stroke-dasharray="79.9 196.56" stroke-dashoffset="-152"/>
+                                    <circle cx="60" cy="60" r="44" stroke="#e8dbfc" stroke-dasharray="35.5 240.96" stroke-dashoffset="-234.9"/>
+                                </g>
+                                <text class="donut-center" x="60" y="58" text-anchor="middle">55%</text>
+                                <text class="donut-sub" x="60" y="76" text-anchor="middle">Grid 骨架</text>
+                            </svg>
+                            <ul class="donut-legend">
+                                <li><i style="background:#78a2d4"></i><span>Grid 骨架</span><b>55%</b></li>
+                                <li><i style="background:#a1c4fd"></i><span>Flexbox 局部</span><b>30%</b></li>
+                                <li><i style="background:#e8dbfc"></i><span>容器查询</span><b>15%</b></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="grid-2" style="gap: 1rem;">
+                        <div class="card">
+                            <div class="stat-num">3 台</div>
+                            <div class="stat-label">现代布局引擎</div>
+                            <div class="stat-note">Flex · Grid · 容器查询</div>
+                        </div>
+                        <div class="card">
+                            <div class="stat-num">0 行</div>
+                            <div class="stat-label">新项目 float 布局代码</div>
+                            <div class="stat-note">float 只留给文字环绕</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8 对比表 -->
+        <section class="slide">
+            <div class="kicker">04 · 响应式新范式</div>
+            <h2>四种方案，一张表看清</h2>
+            <table class="table">
+                <thead>
+                    <tr><th>方案</th><th>维度</th><th>响应单位</th><th>适用场景</th><th>支持率</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>float</td><td>一维</td><td>无</td><td>文字环绕图片</td><td>100%</td></tr>
+                    <tr><td>Flexbox</td><td>一维</td><td>容器主轴</td><td>导航、按钮组、列表项</td><td>99.8%</td></tr>
+                    <tr><td>Grid</td><td>二维</td><td>页面骨架</td><td>整页框架、画册式排版</td><td>98.5%</td></tr>
+                    <tr><td>容器查询</td><td>组件级</td><td>组件容器</td><td>卡片、表单、设计系统</td><td>92.1%</td></tr>
+                </tbody>
+            </table>
+            <div class="note">结论：骨架用 Grid，局部用 Flex，组件自适应交给容器查询——三者是搭档，不是对手。</div>
+        </section>
+
+        <!-- 9 实践建议 -->
+        <section class="slide">
+            <div class="kicker">总结</div>
+            <h2>带回工位的五条实践</h2>
+            <ul class="bullet">
+                <li><span>页面骨架交给 Grid，一维排列交给 Flexbox，别互相硬凹。</span></li>
+                <li><span>float 只用于文字环绕，不再承担任何布局职责。</span></li>
+                <li><span>新组件优先 <code class="inline">@container</code>，页面级断点再用 <code class="inline">@media</code>。</span></li>
+                <li><span>布局代码控制在三层嵌套以内，超出就该重画区域。</span></li>
+                <li><span>升级老页面：先 gap 化、再 grid 化，小步重构不冒进。</span></li>
+            </ul>
+            <div class="note">本文全部示例已整理成可运行 demo，见结尾仓库链接。</div>
+        </section>
+
+        <!-- 10 结尾 -->
+        <section class="slide">
+            <div style="max-width: 82%;">
+                <div class="kicker">THANK YOU</div>
+                <h1 style="font-size: 3rem;">布局的最高境界，是让内容自然落位。</h1>
+                <p class="lede" style="margin-top: 1rem;">示例仓库：github.com/yuanye/css-layout-lab ／ 现场提问环节现在开始。</p>
+                <p class="lede" style="margin-top: .5rem;">试着 <span class="highlight">双击上面的标题</span>——封面文字支持直接编辑。</p>
+            </div>
+            <div class="foot">
+                <span>前端工程组 · 袁野</span>
+                <span>CSS DAY · 2026</span>
+            </div>
+        </section>
+
+        <span class="hint">← → 翻页 · F 全屏</span>
+        <div class="controls">
+            <span class="page-num" id="pageCounter">1 / 10</span>
+            <button class="btn-icon" data-action="prev" aria-label="上一页">‹</button>
+            <button class="btn-icon" data-action="next" aria-label="下一页">›</button>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+        const slides = Array.from(document.querySelectorAll('.slide'));
+        const total = slides.length;
+        let current = 0;
+        const fill = document.getElementById('progressFill');
+        const counter = document.getElementById('pageCounter');
+
+        /* 双主题切换 */
+        const themeBtn = document.getElementById('themeToggle');
+        const iconSun = document.getElementById('iconSun');
+        const iconMoon = document.getElementById('iconMoon');
+        function toggleTheme() {
+            const html = document.documentElement;
+            const dark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', dark ? 'light' : 'dark');
+            iconSun.style.display = dark ? '' : 'none';
+            iconMoon.style.display = dark ? 'none' : '';
+        }
+        if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+
+        function render() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === current));
+            if (fill) fill.style.width = ((current + 1) / total * 100) + '%';
+            if (counter) counter.textContent = (current + 1) + ' / ' + total;
+            history.replaceState(null, '', '#' + (current + 1));
+        }
+        function goTo(n) {
+            const c = Math.max(0, Math.min(total - 1, n));
+            if (c !== current) { current = c; render(); }
+        }
+        const next = () => goTo(current + 1);
+        const prev = () => goTo(current - 1);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.isContentEditable) return; /* 编辑标题时不触发翻页 */
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+            else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+            else if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+            else if (e.key === 'f' || e.key === 'F') {
+                if (document.fullscreenElement) { document.exitFullscreen(); }
+                else if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen(); }
+            }
+        });
+
+        document.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', () => btn.dataset.action === 'next' ? next() : prev());
+        });
+
+        let touchX = null, touchY = null;
+        document.addEventListener('touchstart', (e) => {
+            if (e.target.closest('button')) return;
+            touchX = e.changedTouches[0].clientX;
+            touchY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            if (touchX === null) return;
+            const dx = e.changedTouches[0].clientX - touchX;
+            const dy = e.changedTouches[0].clientY - touchY;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { dx < 0 ? next() : prev(); }
+            touchX = touchY = null;
+        }, { passive: true });
+
+        window.addEventListener('hashchange', () => {
+            const n = parseInt(location.hash.slice(1), 10);
+            if (!isNaN(n)) goTo(n - 1);
+        });
+        const initial = parseInt(location.hash.slice(1), 10);
+        if (!isNaN(initial) && initial >= 1 && initial <= total) current = initial - 1;
+        render();
+    })();
+    </script>
+</body>
+</html>
