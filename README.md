@@ -1,10 +1,6 @@
-<div align="center">
+# html-presentation
 
 **简体中文** · [English](README.en.md)
-
-</div>
-
-# html-presentation
 
 > 单文件 HTML 演示文稿模板库 —— 20 套模板 × 每套 10 页完整示例，零依赖，断网可用。
 

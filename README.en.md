@@ -1,10 +1,6 @@
-<div align="center">
+# html-presentation
 
 [简体中文](README.md) · **English**
-
-</div>
-
-# html-presentation
 
 > Single-file HTML presentation template library — 20 templates × 10 fully-worked slides each, zero dependencies, works offline.
 
