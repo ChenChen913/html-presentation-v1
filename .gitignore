@@ -16,3 +16,19 @@ package-lock.json
 # Logs & temp
 *.log
 qa-snaps/
+
+# Font subset build cache & output (NEVER commit the build scratch / outputs)
+_fontcache/
+_subtmp/
+_measure/C_*.woff2
+_measure/A_*.woff2
+_measure/B_*.woff2
+_measure/_t1.woff2
+_measure/_fc.woff2
+_measure/style.css
+_measure/shardlist.txt
+_measure/need.json
+_measure/tiers.json
+_measure/missing.txt
+_measure/pkg.json
+_shots/

@@ -88,9 +88,10 @@ Keynote 发布会变体（全屏大字 + 玻璃光影，支持滚轮翻页）
 
 交付前必须完成（详见 AVOID_LIST 第九节清单）：
 
-1. 零依赖扫描：全文无 `http://`、`<link`、`<script src`、`@import`。
+1. 零依赖扫描：全文无 `http://`、`<link`、`<script src`、`@import`。**注意 base64 内部可能含 `//` 或 `http` 子串造成假阳性，扫描前先 `re.sub` 把 `base64,…` 整个载荷替换掉**。
 2. 溢出检测：用无头浏览器逐页激活并测量（可用仓库 scripts/qa_overflow.js 的思路），任何溢出回炉改文案。
 3. 交互冒烟：键盘 / 触摸 / 按钮 / `#n` 深链 / F 全屏；双主题模板切换后对比度检查。
+4. （玻璃系 01-12 推荐）字体生效验证：用 canvas `fillText` + `getImageData` 算 FNV-1a 哈希，**不要用 `document.fonts.check()`**——它对任何 family 都返回 true，验不出回退。详见 LAYOUT_RULES 字体节。
 
 ### Step 5：告知用户
 
@@ -111,8 +112,11 @@ F：全屏                 ESC：退出全屏
 
 - `references/AVOID_LIST.md` —— 禁止项 + 玻璃系受控例外 + 自检清单（⚠️ 必读）
 - `references/LAYOUT_RULES.md` —— 画布、字体、密度预算、组件、SVG 图表、代码高亮规范
+  - §4 字体系统 包含**首选本地字体栈**、**可选内联子集**（解决跨设备字体不可用）、
+    三档字符集实测体积表（A=330 KB / B=510 KB / **C 常用 3755 字=1.31 MB**）与
+    **10 条常见坑清单**（CDN 端点 / base64 假阳性 / `@media` 排除 / CJK 字宽陷阱 / Playwright 退出等）
 - `references/TEMPLATES.md` —— 20 套模板目录 + 10 页标准结构 + 引擎说明
-- `references/templates/template01-20.html` —— 模板本体（即文档即示例）
+- `references/templates/template01-20.html` —— 模板本体（即文档即示例；玻璃系 01-12 已内联 LXGW WenKai Screen 字体子集，运行期仍零外网）
 
 读取顺序：AVOID_LIST → LAYOUT_RULES → TEMPLATES → 打开所选模板文件动手改。
 

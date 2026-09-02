@@ -155,7 +155,7 @@ li { font-size: 1.3rem; }
 
 标题 1.05-1.25；正文 1.6-1.85。字重：标题 600-700，强调 600，正文 400，注释 400。
 
-### 字体栈（零依赖：只允许本地字体，按回退顺序声明）
+### 字体栈（首选本地字体栈；按需可内联子集）
 
 | 用途 | 字体栈 |
 |------|--------|
@@ -166,7 +166,69 @@ li { font-size: 1.3rem; }
 | 卷轴变体标题与正文（20，楷体优先） | `"Kaiti SC", "STKaiti", "KaiTi", "LXGW WenKai", "Noto Serif SC", "Songti SC", serif` |
 | 代码块等宽（07/08） | `ui-monospace, "SF Mono", "Fira Code", Consolas, monospace` |
 
-**禁止**任何 `<link>` 外链字体、`@import`、CDN。用户没装霞鹜文楷时自动落到楷体/宋体，属预期行为。
+**首选方案：本地字体栈，按回退顺序声明。** 用户没装霞鹜文楷时自动落到楷体/宋体，属于预期行为；这种「楷意未达但仍可读」的退化比「强制内联 1MB+ 字体」更轻量。
+
+### 内联字体子集（可选；解决跨设备字体不可用）
+
+玻璃系 01-12 的 `body` 字体栈写的是 `LXGW WenKai Screen` 楷体；本机若未安装，
+浏览器会静默回退到系统楷体/宋体，**文件本身仍是本地字体栈、零外网**。当用户
+报告「字体看起来不对劲」或希望「在所有设备上看到完全相同的字形」时，按下面
+流程把霞鹜文楷 Screen 子集内联进文件：
+
+1. 源字体：jsDelivr npm 包 `lxgw-wenkai-screen-webfont@1.1.0`（97 个 unicode-range
+   分片；竖排变体 `screenr-` 跳过）。**Google Fonts 已下架 LXGW WenKai，搜出来
+   0 分片**，别再走 Google Fonts。
+2. 决定字符集档位（实测数据，按需选用；用 `fontTools.subset.Subsetter` + `Merger`）：
+
+   | 档位 | 覆盖 | woff2 | base64/文件 | 适用场景 |
+   |---|---|---|---|---|
+   | A | 仅当前模板内容并集（≈ 1.1k 字） | ≈ 250 KB | ≈ 330 KB | 模板内容固定不变 |
+   | B | 全部 20 套模板内容并集（≈ 1.6k 字） | ≈ 380 KB | ≈ 510 KB | 全库统一时 |
+   | **C（推荐）** | **GB2312 一级 3755 常用字** | **≈ 980 KB** | **≈ 1.31 MB** | **AI 用模板生成新内容** |
+
+3. 注入：在 `<style>` 后紧贴插入一段 `@font-face`（`src: url(data:font/woff2;base64,…) format("woff2")`），
+   然后把 `body` 的 `font-family` 简化为 `"LXGW WenKai Screen", sans-serif;`。
+4. **绝不动 `@media` 块**——里面的响应式降级字号必须保留（详见下方"常见坑"）。
+5. 验证三件套：
+   - **零依赖扫描**（注意先剥离 base64 载荷再 grep，否则会假阳性命中 `https?://`）。
+   - **溢出检测**：用无头浏览器逐页激活，测量 `scrollHeight - clientHeight` 与逐元素
+     `getBoundingClientRect()` 裁剪（参考 `scripts/qa_overflow.js` 的思路）。
+   - **字体像素指纹**：用 canvas `fillText` + `getImageData` 计算 FNV-1a 哈希，验证
+     字形确实换掉了。**不要信 `document.fonts.check()`**——它对任何不存在的 family
+     都返回 `true`（总有 fallback 兜底）。
+
+### 常见坑（按踩到顺序）
+
+1. **CDN 端点选择**：`https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.1.0/flat`
+   在 2026 年已 404（jsDelivr 取消了无鉴权的 flat listing）。**改用**
+   `https://data.jsdelivr.com/v1/packages/npm/lxgw-wenkai-screen-webfont@1.1.0?structure=flat`
+   拿文件清单。真正的横排 CSS 路径是
+   `…/lxgwwenkaiscreen.css`（注意无连字符）；`/style.css` 只含两行 `@import`；
+   竖排变体是 `lxgwwenkaiscreenr.css`。
+2. **`unicode-range` 解析**：jsDelivr 的 CSS 里 `unicode-range` 行的末尾**没有分号**，
+   一定要用 `r"unicode-range:\s*([^;}]+)"` 而不是 `r"unicode-range:\s*([^;]+);"`，否则
+   一片分片都解析不到。
+3. **Windows 文本模式写文件**：`io.open(path, 'w')` 会把 `\n` 写成 `\r\n`，xargs 下游
+   拿到带 `\r` 的文件名 → 404。脚本里写文件清单时**必须用 `open(path, 'wb')` + `.encode('utf-8')`**。
+4. **Subsetter 之前的 flavor 必须清空**：输入是 woff2 时，TTFont 对象的 `flavor` 是
+   `"woff2"`（brotli 压缩）。`f.flavor = None; f.save(tp)` 后才能写出可被 `Merger` 读的
+   未压缩 TTF；否则 Merger 报无效 ttx 错误。
+5. **`Merger().merge()` 只接受文件路径**：传 `TTFont` 对象会 `TypeError: fileOrPath must
+   be a file path`。先 `f.save(tp)` 写出临时 .ttf，再把路径列表传给 `Merger`。
+6. **CJK 字宽探针**无法验字：所有 CJK 字符都是等宽（全角），用 span `getBoundingClientRect`
+   测宽度对任何字体都返回相同值。改用 canvas 像素指纹（见上）。
+7. **零依赖扫描的 base64 假阳性**：base64 字母表含 `+ / =`，可能拼出 `//` 或 `http`
+   子串。**必须**先 `re.sub(r"base64,[A-Za-z0-9+/=]+", "base64,<PAYLOAD>", html)` 再 grep
+   `https?://` / `<link` / `<script[^>]+src=` / `@import`。
+8. **`@media` 块必须从静态比较里排除**：响应式降级字号在小屏下用 `font-size: 2.5rem`，
+   跟主样式区的 4rem 不一样。如果不先把 `@media` 块挖出来再 diff，会把降级值误判成
+   「主值不一样」。用 brace 深度追踪 + 区间判断（见现有 diff 脚本的 `media_spans`）。
+9. **Playwright 在 `browser.close()` 后不退出**：node 进程会挂起。在 `await browser.close()`
+   之后**必须** `process.exit(0)`，否则 120s 后才超时 SIGTERM。
+10. **Playwright 模块位置**：本机安装在**全局** npm
+    `C:\Users\11853\AppData\Roaming\npm\node_modules`，不在 managed workspace 里。
+    调用时 `NODE_PATH="C:/Users/11853/AppData/Roaming/npm/node_modules" node …`。
+
 
 ---
 

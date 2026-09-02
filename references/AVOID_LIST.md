@@ -140,7 +140,7 @@ transition: all 1.5s ease;  /* 超过 400ms 的页面切换禁 */
 
 ## 九、交付前自检清单
 
-- [ ] 全文搜索无 `http://` / `https://` / `<link` / `<script src` / `@import`
+- [ ] 全文搜索无 `http://` / `https://` / `<link` / `<script src` / `@import`（**扫描前先把 `data:...;base64,<PAYLOAD>` 整个载荷 `re.sub` 挖掉**，否则 base64 内的 `//` / `http` 子串会假阳性命中）
 - [ ] 无 emoji；列表符仅限 CSS 绘制与第八节允许的家族签名
 - [ ] 强调色唯一（多色模板遵循各套色彩职责；代码语法色与内容色卡除外）
 - [ ] 核心排版字号为固定 rem 且量级=原版（禁止 clamp/vw 压缩，见 LAYOUT_RULES 字体系统）；逐页无溢出（无头浏览器实测，参考 scripts/qa_overflow.js）
